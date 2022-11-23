@@ -1,10 +1,18 @@
 import config
 
-from main import app
 
 ##################################################
 # project main entrypoint
 ##################################################
+
+from flask import Blueprint
+from flask_api import FlaskAPI
+from flask_sqlalchemy import SQLAlchemy
+from flask_restx import Api
+from flask_cors import CORS
+
+import config
+from main import app
 
 
 if __name__ == "__main__":

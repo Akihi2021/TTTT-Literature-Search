@@ -1,13 +1,16 @@
-from flask import request
-from log import logger
+from flask import request, Blueprint
+from flask_restx import fields, Api, Resource
+from uuid import uuid4
 
-from main import app, api
+from main import app, swagger
 from rest import request_handle, Response, BaseResource
 
 ##################################################
 # Demo route
 ##################################################
-hello_ns = api.namespace('hello', description='APIs for simple testing')
+hello_ns = swagger.namespace('hello', description='APIs for simple testing')
+swagger.add_namespace(hello_ns)
+
 @hello_ns.route('/test-add')
 class TestAdd(BaseResource):
     @hello_ns.doc('test a + b + c')
@@ -24,28 +27,3 @@ class TestAdd(BaseResource):
         resp.data['b'] = b
         resp.data['sum'] = sm
         return resp
-
-
-##################################################
-# Demo route with URL query
-##################################################
-paper_ns = api.namespace(
-    'recomendation', description='Online Recommendation Scenarios')
-
-
-@paper_ns.route('/user/<string:user_id>/papers')
-class VideoRecommend(BaseResource):
-    @paper_ns.doc('Get all paper of certain user')
-    @request_handle
-    def get(self, user_id):
-        logger.info('接收到用户"{}"的论文请求'.format(user_id))
-        return
-
-
-@paper_ns.route('/user/<string: user_id>/category/<string:category_id>/paper')
-class CategoryVideoRecommend(BaseResource):
-    @paper_ns.doc('')
-    @request_handle
-    def get(self, user_id, category_id):
-        logger.info('接收到用户"{}"、论文类别"{}"的论文请求'.format(user_id, category_id))
-        return
