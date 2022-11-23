@@ -4,7 +4,7 @@ from flask_restx import fields, Resource
 from json import JSONEncoder
 from datetime import date, datetime
 
-from main import api
+from main import swagger
 from log import logger
 
 ##################################################
@@ -59,15 +59,15 @@ class Response(ISerializable):
 
 
 # base response api docs
-response_model = api.model('Response', {
+response_model = swagger.model('Response', {
     'status': fields.Integer(description='response status'),
     'msg': fields.String(description='response message'),
     'data': fields.Raw
 })
 
 
-@api.response(200, 'ok', model=response_model)
-@api.response(500, 'error', model=response_model)
+@swagger.response(200, 'ok', model=response_model)
+@swagger.response(500, 'error', model=response_model)
 class BaseResource(Resource):
     '''base rest api router class
     '''
