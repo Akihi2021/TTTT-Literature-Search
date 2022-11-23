@@ -1,8 +1,8 @@
 from datetime import datetime
-from sqlalchemy.dialects.mysql import LONGTEXT
-from flask import Flask
+
 from log import logger
 from main import db
+
 
 # Job is template Model
 
