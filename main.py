@@ -12,9 +12,10 @@ swagger = Api(app, version='1.0', doc='/swagger', title='TTTT Backend API', desc
 CORS(app)  # 接受跨域
 
 
-# db = SQLAlchemy(app)
-db = SQLAlchemy()
 app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://'+config.db_user + ':' + config.db_passwd + \
     '@'+config.db_host+':' + \
     str(config.db_port)+'/'+config.db_database+'?charset=utf8'
+
+db = SQLAlchemy()
+# db = SQLAlchemy(app)
