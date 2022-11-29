@@ -5,10 +5,7 @@ from flask_cors import CORS
 from flask import Blueprint
 import config
 
-# create Flask App and Swagger UI
-# app = FlaskAPI("tttt", template_folder='result')
-# swagger = Api(app, version='1.0', doc='/swagger', title='TTTT Backend API', description='API for TTTT Literature Search')
-
+# Create Flask App and Swagger UI
 app = FlaskAPI("TTTT", template_folder='result')
 app_blueprint = Blueprint('api', __name__, url_prefix='/v1')
 swagger = Api(app_blueprint, version='1.0', doc='/swagger', title='TTTT Literature Search Backend API')
