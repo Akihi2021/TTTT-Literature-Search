@@ -7,6 +7,7 @@ from main import app, swagger
 from rest import request_handle, Response, BaseResource
 from log import logger
 from models import User
+from helper import sql
 
 ##################################################
 # Demo route with URL query
@@ -33,7 +34,11 @@ class LoginUser(UserMixin):
 
     @staticmethod
     def get(username):
-        user = User.query_by_username(username)
+        with sql.Db_connection("127.70.14.86", "root",
+                               "Buaa2022", "tttt") as [db, cursor]:
+            user = sql.select(cursor, '*', 'user',
+                              'where user_name = %s' % username)
+            db.commit()
         if not user:
             return None
         return LoginUser(user)
@@ -59,14 +64,17 @@ class ForgetPassword(BaseResource):
         repassword = str(request.args['rePassword'])
         resp = Response()
 
-        user = User.query_by_username_and_email(username, email)
-        if user:
-            if repassword == password:
-                user.update_password(password)
+        with sql.Db_connection("127.70.14.86", "root",
+                               "Buaa2022", "tttt") as [db, cursor]:
+            user = sql.select(cursor, '*', 'user',
+                              'where user_name = %s' % username)
+            if user:
+                if repassword == password:
+                    sql.update(cursor, ['password'], 'user', [password])
+                else:
+                    resp.msg = 'The two passwords are inconsistent'
             else:
-                resp.msg = 'The two passwords are inconsistent'
-        else:
-            resp.msg = 'User not found'
+                resp.msg = 'User not found'
         return resp
 
 
@@ -113,8 +121,11 @@ class PersonalRegister(BaseResource):
             resp.msg = 'User already exists'
         else:
             if password == repassword:
-                user = User.create_user(username, password, email)
-                user.save_to_db()
+                with sql.Db_connection("127.70.14.86", "root",
+                                       "Buaa2022", "tttt") as [db, cursor]:
+                    user = sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
+                                      username, password, email])
+                    db.commit()
             else:
                 resp.msg = 'The two passwords are inconsistent'
 
