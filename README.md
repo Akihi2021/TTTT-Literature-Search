@@ -25,7 +25,7 @@ NOTE: need to run in the project root path
 
 `docker build -t vinokkk/tttt:{VERSION_TAG} .`
 
-## Docker push 
+## Docker Push 
 `docker push vinokkk/tttt:{VERSION_TAG}`
 
 ## Docker Run
