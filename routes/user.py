@@ -1,6 +1,6 @@
 from flask import request, Blueprint
 from flask_restx import fields, Api, Resource
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin
 from uuid import uuid4
 
 from main import app, swagger
@@ -18,6 +18,9 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
+class LoginUser(UserMixin):
+
+
 @user_ns.route('/forget_pass')
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
@@ -32,19 +35,15 @@ class ForgetPassword(BaseResource):
         password = str(request.args['password'])
         repassword = str(request.args['rePassword'])
         user = User()
-        resp = Response(data={})
+        resp = Response()
 
         if user.query_by_username_and_email(username, email):
             if repassword == password:
                 user.update_password(username, email, password)
-                resp.data['code'] = 400
             else:
-                resp.data['code'] = 200
-                resp.data['msg'] = 'the two passwords are inconsistent'
+                resp.msg = 'The two passwords are inconsistent'
         else:
-            resp.data['code'] = 200
-            resp.data['msg'] = 'user not found'
-
+            resp.msg = 'User not found'
         return resp
 
 
@@ -58,4 +57,4 @@ class PersonalLogin(BaseResource):
         username = str(request.args['id'])
         password = str(request.args['password'])
         user = User()
-        resp = Response(data={})
+        resp = Response()

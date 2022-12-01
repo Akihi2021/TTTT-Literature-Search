@@ -116,13 +116,11 @@ class User(db.Model):
         return obj
 
     @classmethod
-    def update_password(cls, user_name, email, password):
-        obj = cls.query.filter_by(user_name=user_name, email=email).first()
-        if obj:
-            obj.password = password
-            db.session.add(obj)
-            db.session.commit()
-        return obj
+    def update_password(self, password):
+        self.password = password
+        db.session.add(self)
+        db.session.commit()
+        return self
 
     def decode(self):
         if self:
