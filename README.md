@@ -18,18 +18,18 @@ Path: localhost:5000/v1/swagger
 2. Run 
 
 ## Docker Pull
-`docker pull vinokkk/{VERSION_TAG}`
+`docker pull vinokkk/tttt:{VERSION_TAG}`
 
 ## Docker Build
 NOTE: need to run in the project root path
 
-`docker build -t tttt:{VERSION_TAG} .`
+`docker build -t vinokkk/tttt:{VERSION_TAG} .`
 
 ## Docker push 
 `docker push vinokkk/tttt:{VERSION_TAG}`
 
 ## Docker Run
-`docker run -it -p 5000:5000 tttt:{VERSION_TAG} `
+`docker run -it -p 5000:5000 vinokkk/tttt:{VERSION_TAG} `
 
 NOTE: 
 1. -p flag binds local port 5000 to the docker container port 5000 which allows us to visit our service with URL localhost:5000
@@ -39,11 +39,11 @@ NOTE:
 
 
 ## Docker Run With Codes Mounted
-`docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app tttt:{VERSION_TAG}`
+`docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app vinokkk/tttt:{VERSION_TAG}`
 
 e.g. 
 
-`docker run -it -p 5000:5000 -v /Users/kim/Intern/momenta/codes/TTTT-Literature-Search:/app tttt:1.0`
+`docker run -it -p 5000:5000 -v /Users/kim/Intern/momenta/codes/TTTT-Literature-Search:/app vinokkk/tttt:1.0`
 
 NOTE: 
 1. -v flag mount our TTTT project to the /app directory of our container.
