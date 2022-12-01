@@ -1,6 +1,6 @@
 from flask import request, Blueprint
 from flask_restx import fields, Api, Resource
-from flask_login import LoginManager, UserMixin
+from flask_login import LoginManager, UserMixin, login_user
 from uuid import uuid4
 
 from main import app, swagger
@@ -19,6 +19,29 @@ login_manager.login_view = 'login'
 
 
 class LoginUser(UserMixin):
+    def __init__(self, user):
+        self.username = user.decode().user_name
+        self.password = user.decode().password
+        self.email = user.decode().email
+        self.id = user.id
+
+    def verify_password(self, password):
+        return password == self.password
+
+    def get_id(self):
+        return self.id
+
+    @staticmethod
+    def get(username):
+        user = User.query_by_username(username)
+        if not user:
+            return None
+        return LoginUser(user)
+
+
+@login_manager.user_loader
+def load_user(username):
+    return LoginUser.get(username)
 
 
 @user_ns.route('/forget_pass')
@@ -34,12 +57,12 @@ class ForgetPassword(BaseResource):
         username = str(request.args['id'])
         password = str(request.args['password'])
         repassword = str(request.args['rePassword'])
-        user = User()
         resp = Response()
 
-        if user.query_by_username_and_email(username, email):
+        user = User.query_by_username_and_email(username, email)
+        if user:
             if repassword == password:
-                user.update_password(username, email, password)
+                user.update_password(password)
             else:
                 resp.msg = 'The two passwords are inconsistent'
         else:
@@ -56,5 +79,43 @@ class PersonalLogin(BaseResource):
     def post(self):
         username = str(request.args['id'])
         password = str(request.args['password'])
-        user = User()
         resp = Response()
+        user = load_user(username)
+
+        if user:
+            if user.verify_password(password):
+                login_user(user)
+            else:
+                resp.msg = 'Wrong password'
+        else:
+            resp.msg = 'User not found'
+
+        return resp
+
+
+@user_ns.router('/register')
+class PersonalRegister(BaseResource):
+    @user_ns.doc('user register')
+    @user_ns.param('id', 'username', type=str)
+    @user_ns.param('password', 'password', type=str)
+    @user_ns.param('repassword', 'rePassword', type=str)
+    @user_ns.param('Email', 'Email', type=str)
+    @request_handle
+    def post(self):
+        email = str(request.args['Email'])
+        username = str(request.args['id'])
+        password = str(request.args['password'])
+        repassword = str(request.args['repassword'])
+        resp = Response()
+
+        user = User.query_by_username(username)
+        if user:
+            resp.msg = 'User already exists'
+        else:
+            if password == repassword:
+                user = User.create_user(username, password, email)
+                user.save_to_db()
+            else:
+                resp.msg = 'The two passwords are inconsistent'
+
+        return resp

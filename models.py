@@ -101,9 +101,8 @@ class User(db.Model):
         self.decode()
 
     @classmethod
-    def create_user(cls, user_name, password, gender, mail, phone, major, campus, institution):
-        obj = cls(user_name=user_name, password=password, gender=gender, mail=mail,
-                  phone=phone, major=major, campus=campus, institution=institution)
+    def create_user(cls, user_name, password, mail):
+        obj = cls(user_name=user_name, password=password, mail=mail)
         db.session.add(obj)
         db.session.commit()
         return obj
@@ -111,6 +110,13 @@ class User(db.Model):
     @classmethod
     def query_by_username_and_email(cls, user_name, email):
         obj = cls.query.filter_by(user_name=user_name, email=email).first()
+        if obj:
+            obj = obj.decode()
+        return obj
+
+    @classmethod
+    def query_by_username(cls, user_name):
+        obj = cls.query.filter_by(user_name=user_name).first()
         if obj:
             obj = obj.decode()
         return obj
