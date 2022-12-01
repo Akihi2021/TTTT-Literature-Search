@@ -6,7 +6,6 @@ from uuid import uuid4
 from main import app, swagger
 from rest import request_handle, Response, BaseResource
 from log import logger
-from models import User
 from helper import sql
 
 ##################################################
@@ -116,7 +115,10 @@ class PersonalRegister(BaseResource):
         repassword = str(request.args['repassword'])
         resp = Response()
 
-        user = User.query_by_username(username)
+        with sql.Db_connection("127.70.14.86", "root",
+                               "Buaa2022", "tttt") as [db, cursor]:
+            user = sql.select(cursor, '*', 'user',
+                              'where user_name = %s' % username)
         if user:
             resp.msg = 'User already exists'
         else:
