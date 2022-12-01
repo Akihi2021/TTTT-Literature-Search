@@ -5,7 +5,7 @@ https://github.com/Akihi2021/TTTT-Literature-Search
 https://hub.docker.com/repository/docker/vinokkk/tttt/
 
 # Swagger 
-Path: 127.0.0.1:5000/v1/swagger
+Path: localhost:5000/v1/swagger
 
 # Docker Commands
 ## Workflow
@@ -13,7 +13,7 @@ Path: 127.0.0.1:5000/v1/swagger
 1. Build
 2. Run
 3. Push
-- For User
+- For User (Front End Developers)
 1. Pull 
 2. Run 
 
@@ -29,7 +29,7 @@ NOTE: need to run in the project root path
 `docker push vinokkk/tttt:{VERSION_TAG}`
 
 ## Docker Run
-`docker run -it -p 5000:5000 tttt:1.0 `
+`docker run -it -p 5000:5000 tttt:{VERSION_TAG} `
 
 NOTE: 
 1. -p flag binds local port 5000 to the docker container port 5000 which allows us to visit our service with URL localhost:5000
