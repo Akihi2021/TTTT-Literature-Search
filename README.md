@@ -39,7 +39,7 @@ NOTE:
 
 
 ## Docker Run With Codes Mounted
-`docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app `
+`docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app tttt:{VERSION_TAG}`
 
 e.g. 
 
