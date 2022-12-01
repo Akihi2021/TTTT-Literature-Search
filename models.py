@@ -2,6 +2,7 @@ from datetime import datetime
 
 from log import logger
 from main import db
+from helper import sql
 
 
 # Job is template Model
@@ -103,29 +104,43 @@ class User(db.Model):
     @classmethod
     def create_user(cls, user_name, password, mail):
         obj = cls(user_name=user_name, password=password, mail=mail)
-        db.session.add(obj)
-        db.session.commit()
+        with sql.Db_connection('127.70.14.86', 'root',
+                               'Buaa2022', 'tttt') as [db, cursor]:
+            sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
+                       obj.user_name, obj.password, obj.mail])
+            db.commit()
         return obj
 
     @classmethod
     def query_by_username_and_email(cls, user_name, email):
-        obj = cls.query.filter_by(user_name=user_name, email=email).first()
+        with sql.Db_connection('127.70.14.86', 'root',
+                               'Buaa2022', 'tttt') as [db, cursor]:
+            obj = sql.select(cursor, ['*'], 'user',
+                             'where user_name = %s and mail = %s' % (user_name, email))
         if obj:
-            obj = obj.decode()
-        return obj
+            obj = cls(user_name=obj['user_name'],
+                      password=obj['password'], mail=obj['mail'])
+        return obj.decode()
 
     @classmethod
     def query_by_username(cls, user_name):
-        obj = cls.query.filter_by(user_name=user_name).first()
+        with sql.Db_connection('127.70.14.86', 'root',
+                               'Buaa2022', 'tttt') as [db, cursor]:
+            obj = sql.select(cursor, ['*'], 'user',
+                             'where user_name = %s' % user_name)
         if obj:
-            obj = obj.decode()
-        return obj
+            obj = cls(user_name=obj['user_name'],
+                      password=obj['password'], mail=obj['mail'])
+        return obj.decode()
 
     @classmethod
     def update_password(self, password):
         self.password = password
-        db.session.add(self)
-        db.session.commit()
+        with sql.Db_connection('127.70.14.86', 'root',
+                               'Buaa2022', 'tttt', 3306) as [db, cursor]:
+            obj = sql.update(cursor, ['password'], 'user', [password],
+                             'where user_name = %s' % self.user_name)
+            db.commit()
         return self
 
     def decode(self):

@@ -70,7 +70,7 @@ class ForgetPassword(BaseResource):
         return resp
 
 
-@user_ns.router('/login')
+@user_ns.route('/login')
 class PersonalLogin(BaseResource):
     @user_ns.doc('user login')
     @user_ns.param('id', 'username', type=str)
@@ -93,7 +93,7 @@ class PersonalLogin(BaseResource):
         return resp
 
 
-@user_ns.router('/register')
+@user_ns.route('/register')
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
     @user_ns.param('id', 'username', type=str)
