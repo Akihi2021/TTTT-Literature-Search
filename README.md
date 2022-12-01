@@ -1,29 +1,51 @@
+# Git Repo
+https://github.com/Akihi2021/TTTT-Literature-Search
+
+# Dockerhub Repo
+https://hub.docker.com/repository/docker/vinokkk/tttt/
+
 # Swagger 
 Path: 127.0.0.1:5000/v1/swagger
 
-# Docker 
-## Workflow 
-1. For Developer
-- Build 
-- Run 
-- Push 
+# Docker Commands
+## Workflow
+- For Developer
+1. Build
+2. Run
+3. Push
+- For User
+1. Pull 
+2. Run 
 
-2. For User
-- Pull
-- Run
 ## Docker Pull
-docker pull vinokkk/{VERSION_TAG}
+`docker pull vinokkk/{VERSION_TAG}`
 
-## Docker Build 
-docker build -t tttt:{VERSION_TAG} .
+## Docker Build
+NOTE: need to run in the project root path
+
+`docker build -t tttt:{VERSION_TAG} .`
 
 ## Docker push 
-docker push -t vinokkk/tttt:{VERSION_TAG}
+`docker push vinokkk/tttt:{VERSION_TAG}`
 
-## Dokcer Run
-- Normal: 
-docker run -it -p 5000:5000 tttt:latest 
-- For Test:
-docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app (For Test: No need to build docker file each time when changes applied)
-- 
-e.g. docker run -it -p -v /Users/kim/Intern/momenta/codes/TTTT-Literature-Search:/app 5000:5000 2f6bcefe2160
+## Docker Run
+`docker run -it -p 5000:5000 tttt:latest `
+
+NOTE: 
+1. -p flag binds local port 5000 to the docker container port 5000 which allows us to visit our service with URL localhost:5000
+2. When run successfully, you should see swagger on localhost:5000/v1/swagger
+
+
+
+
+## Docker Run With Codes Mounted
+`docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app `
+e.g. 
+
+`docker run -it -p 5000:5000 -v /Users/kim/Intern/momenta/codes/TTTT-Literature-Search:/app  2f6bcefe2160`
+
+NOTE: 
+1. -v flag mount our TTTT project to the /app directory of our container.
+
+2. Since python is a descriptive language, this will allow us to modify our code without having to  build docker file each time, simply restart the container will do.
+
