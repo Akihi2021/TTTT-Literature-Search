@@ -29,7 +29,7 @@ NOTE: need to run in the project root path
 `docker push vinokkk/tttt:{VERSION_TAG}`
 
 ## Docker Run
-`docker run -it -p 5000:5000 tttt:latest `
+`docker run -it -p 5000:5000 tttt:1.0 `
 
 NOTE: 
 1. -p flag binds local port 5000 to the docker container port 5000 which allows us to visit our service with URL localhost:5000
@@ -40,9 +40,10 @@ NOTE:
 
 ## Docker Run With Codes Mounted
 `docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app `
+
 e.g. 
 
-`docker run -it -p 5000:5000 -v /Users/kim/Intern/momenta/codes/TTTT-Literature-Search:/app  2f6bcefe2160`
+`docker run -it -p 5000:5000 -v /Users/kim/Intern/momenta/codes/TTTT-Literature-Search:/app tttt:1.0`
 
 NOTE: 
 1. -v flag mount our TTTT project to the /app directory of our container.
