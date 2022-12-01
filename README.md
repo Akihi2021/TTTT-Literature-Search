@@ -48,5 +48,5 @@ e.g.
 NOTE: 
 1. -v flag mount our TTTT project to the /app directory of our container.
 
-2. Since python is a descriptive language, this will allow us to modify our code without having to  build docker file each time, simply restart the container will do.
+2. Since python is a descriptive language, this will allow us to modify our code without having to  build docker image each time, simply restart the container will do.
 
