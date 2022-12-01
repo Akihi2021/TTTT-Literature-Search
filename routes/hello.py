@@ -1,8 +1,7 @@
 from flask import request, Blueprint
 from flask_restx import fields, Api, Resource
-from uuid import uuid4
 
-from main import app, swagger
+from main import swagger
 from rest import request_handle, Response, BaseResource
 
 ##################################################
@@ -10,6 +9,7 @@ from rest import request_handle, Response, BaseResource
 ##################################################
 hello_ns = swagger.namespace('hello', description='APIs for simple testing')
 swagger.add_namespace(hello_ns)
+
 
 @hello_ns.route('/test-add')
 class TestAdd(BaseResource):

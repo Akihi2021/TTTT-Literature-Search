@@ -1,7 +1,6 @@
-from flask import request
 from log import logger
 
-from main import app, swagger
+from main import swagger
 from rest import request_handle, Response, BaseResource
 
 # ##################################################
@@ -9,9 +8,7 @@ from rest import request_handle, Response, BaseResource
 # ##################################################
 paper_ns = swagger.namespace('paper', description='Online Recommendation Scenarios')
 swagger.add_namespace(paper_ns)
-
-
-@paper_ns.route('/user/<string:user_id>/papers')
+@paper_ns.route('/user/<string:user_id>/')
 class VideoRecommend(BaseResource):
     @paper_ns.doc('Get all paper of certain user')
     @request_handle
@@ -20,7 +17,7 @@ class VideoRecommend(BaseResource):
         return
 
 
-@paper_ns.route('/user/<string: user_id>/category/<string:category_id>/papers')
+@paper_ns.route('/user/<string:user_id>/category/<string:category_id>/')
 class CategoryVideoRecommend(BaseResource):
     @paper_ns.doc('')
     @request_handle
