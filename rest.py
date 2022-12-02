@@ -4,7 +4,7 @@ from flask_restx import fields, Resource
 from json import JSONEncoder
 from datetime import date, datetime
 
-from main import swagger
+from context import swagger
 from log import logger
 
 ##################################################
@@ -21,6 +21,7 @@ class ISerializable:
 class AppJSONEncoder(JSONEncoder):
     '''json encoder for serialization
     '''
+
     def default(self, obj):
         if isinstance(obj, (ISerializable)):
             return obj.__dict__
@@ -43,7 +44,7 @@ def request_handle(func):
             resp.data['error_detail'] = str(e)
             # resp.data['error_detail'] = error_detail.strip().split('\n')
         finally:
-            return make_response(jsonify(resp), resp.status)
+            return make_response(jsonify(resp), resp.code)
 
     handle.__name__ = func.__name__
     return handle
@@ -52,15 +53,16 @@ def request_handle(func):
 class Response(ISerializable):
     '''base response class
     '''
-    def __init__(self, status=200, msg='success', data=None):
-        self.status = status
+
+    def __init__(self, code=200, msg='success', data=None):
+        self.code = code
         self.msg = msg
         self.data = data
 
 
 # base response api docs
 response_model = swagger.model('Response', {
-    'status': fields.Integer(description='response status'),
+    'code': fields.Integer(description='response code'),
     'msg': fields.String(description='response message'),
     'data': fields.Raw
 })

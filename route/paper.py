@@ -1,6 +1,6 @@
 from log import logger
 
-from main import swagger
+from context import swagger
 from rest import request_handle, Response, BaseResource
 
 # ##################################################
