@@ -107,5 +107,6 @@ class User(db.Model):
 
 if __name__ == "__main__":
     # NOTE: add `with app.app_context():` to test locally
+
     with app.app_context():
         User.query_all()

@@ -6,7 +6,7 @@
 
 from datetime import datetime
 from log import logger
-from context import db
+from context import db, app
 from helper import sql
 
 
@@ -76,3 +76,10 @@ class Job(db.Model):
                 self.sim_range = self.sim_range.decode('utf-8')
 
         return self
+
+
+if __name__ == "__main__":
+    # NOTE: add `with app.app_context():` to test locally
+
+    with app.app_context():
+        Job.query_all()
