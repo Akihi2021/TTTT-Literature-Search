@@ -53,7 +53,6 @@ def request_handle(func):
 class Response(ISerializable):
     '''base response class
     '''
-
     def __init__(self, code=200, msg='success', data=None):
         self.code = code
         self.msg = msg
