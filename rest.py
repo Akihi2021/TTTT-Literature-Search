@@ -21,6 +21,7 @@ class ISerializable:
 class AppJSONEncoder(JSONEncoder):
     '''json encoder for serialization
     '''
+
     def default(self, obj):
         if isinstance(obj, (ISerializable)):
             return obj.__dict__

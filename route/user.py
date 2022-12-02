@@ -22,10 +22,10 @@ login_manager.login_view = 'login'
 
 class LoginUser(UserMixin):
     def __init__(self, user):
-        self.username = user.decode().user_name
-        self.password = user.decode().password
-        self.email = user.decode().email
-        self.id = user.id
+        self.username = user[1]
+        self.password = user[2]
+        self.email = user[4]
+        self.id = user[0]
 
     def verify_password(self, password):
         return password == self.password
@@ -33,16 +33,25 @@ class LoginUser(UserMixin):
     def get_id(self):
         return self.id
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
     @staticmethod
     def get(username):
-        with sql.Db_connection("127.70.14.86", "root",
-                               "Buaa2022", "tttt") as [db, cursor]:
-            user = sql.select(cursor, '*', 'user',
-                              'where user_name = %s' % username)
-            db.commit()
-        if not user:
+        loginuser = user.get_user_by_username(username)
+        if loginuser[0]:
+            return LoginUser(loginuser[1][0])
+        else:
             return None
-        return LoginUser(user)
 
 
 @login_manager.user_loader
@@ -50,21 +59,26 @@ def load_user(username):
     return LoginUser.get(username)
 
 
-# TODO: Refer to route.hello.test-add.post for POST
+parser = swagger.parser()
+parser.add_argument('id', location='json', type=str,
+                    required=False, help='Userame')
+parser.add_argument('email', location='json', type=str,
+                    required=False, help='Email')
+parser.add_argument('password', location='json', type=str,
+                    required=False, help='Password')
+parser.add_argument('repassword', location='json', type=str,
+                    required=False, help='rePassword')
+
+
 @user_ns.route('/forget_pass')
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
-    # @user_ns.param('Email', 'Email', type=str)
-    # @user_ns.param('id', 'username', type=str)
-    # @user_ns.param('password', 'password', type=str)
-    # @user_ns.param('rePassword', 'rePassword', type=str)
+    @user_ns.expect(parser)
     @request_handle
     def post(self):
-        username = str(request.args['id'])
-        password = str(request.args['password'])
-        repassword = str(request.args['rePassword'])
-
-        ret = user.update_password(username, password, repassword)
+        args = parser.parse_args()
+        ret = user.update_password(
+            args["id"], args["password"], args["repassword"])
         resp = Response(data={})
         resp.data = ret
 
@@ -74,60 +88,44 @@ class ForgetPassword(BaseResource):
 @user_ns.route('/login')
 class PersonalLogin(BaseResource):
     @user_ns.doc('user login')
-    @user_ns.param('id', 'username', type=str)
-    @user_ns.param('password', 'password', type=str)
+    @user_ns.expect(parser)
     @request_handle
     def post(self):
-        username = str(request.args['id'])
-        password = str(request.args['password'])
-        resp = Response()
-        user = load_user(username)
+        args = parser.parse_args()
+        resp = Response(data={})
+        loginuser = load_user(args['id'])
 
-        if user:
-            if user.verify_password(password):
-                login_user(user)
+        if loginuser:
+            if loginuser.password == args['password']:
+                login_user(loginuser)
+                ret = {'id': loginuser.id, 'username': loginuser.username}
             else:
-                resp.msg = 'Wrong password'
+                print(loginuser.password)
+                print(args['password'])
+                ret = 'Wrong password'
         else:
-            resp.msg = 'User not found'
+            ret = 'User not found'
 
+        resp.data = ret
         return resp
 
 
 @user_ns.route('/register')
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
-    @user_ns.param('id', 'username', type=str)
-    @user_ns.param('password', 'password', type=str)
-    @user_ns.param('repassword', 'rePassword', type=str)
-    @user_ns.param('Email', 'Email', type=str)
+    @user_ns.expect(parser)
     @request_handle
     def post(self):
-        email = str(request.args['Email'])
-        username = str(request.args['id'])
-        password = str(request.args['password'])
-        repassword = str(request.args['repassword'])
-        resp = Response()
-
-        with sql.Db_connection("127.70.14.86", "root",
-                               "Buaa2022", "tttt") as [db, cursor]:
-            user = sql.select(cursor, '*', 'user',
-                              'where user_name = %s' % username)
-        if user:
-            resp.msg = 'User already exists'
-        else:
-            if password == repassword:
-                with sql.Db_connection("127.70.14.86", "root",
-                                       "Buaa2022", "tttt") as [db, cursor]:
-                    user = sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
-                                      username, password, email])
-                    db.commit()
-            else:
-                resp.msg = 'The two passwords are inconsistent'
+        args = parser.parse_args()
+        resp = Response(data={})
+        ret = user.insert_new_user(
+            args['id'], args['password'], args['repassword'], args['email'])
+        resp.data = ret
 
         return resp
 
+
 @user_ns.route('/all')
-class PersonalRegister(BaseResource):
+class TestList(BaseResource):
     def get(self):
         return User.query_all()

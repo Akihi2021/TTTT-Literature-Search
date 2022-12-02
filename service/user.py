@@ -1,52 +1,48 @@
 from config import *
 from helper import sql
+from context import db
 
 
-def updata_password(username, password, repassword):
+def update_password(username, password, repassword):
     with sql.Db_connection() as [db, cursor]:
         user = sql.select(cursor, '*', 'user',
-                          'where user_name = %s' % username)
-        if user:
+                          "where user_name = '%s'" % username)
+        if user[0]:
             if repassword == password:
-                sql.update(cursor, ['password'], 'user', [password])
+                sql.update(cursor, ['password'], '`user`', [
+                    password], "where user_name = '%s'" % username, True)
+                ret = None
             else:
                 ret = 'The two passwords are inconsistent'
         else:
             ret = 'User not found'
+        db.commit()
 
-        return ret
+    return ret
 
 
-# def create_user(user_name, password, mail):
-#     with sql.Db_connection() as [db, cursor]:
-#         sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
-#             user_name, password, mail])
-#         db.commit()
-#
-#
-# def query_by_username_and_email(user_name, email):
-#     with sql.Db_connection() as [db, cursor]:
-#         obj = sql.select(cursor, ['*'], 'user',
-#                          'where user_name = %s and mail = %s' % (user_name, email))
-#     if obj:
-#         obj = cls(user_name=obj['user_name'],
-#                   password=obj['password'], mail=obj['mail'])
-#     return obj.decode()
-#
-#
-# def query_by_username(user_name):
-#     with sql.Db_connection() as [db, cursor]:
-#         obj = sql.select(cursor, ['*'], 'user',
-#                          'where user_name = %s' % user_name)
-#     if obj:
-#         obj = cls(user_name=obj['user_name'],
-#                   password=obj['password'], mail=obj['mail'])
-#     return obj.decode()
-#
-#
-# def update_password(password):
-#     with sql.Db_connection() as [db, cursor]:
-#         obj = sql.update(cursor, ['password'], 'user', [password],
-#                          'where user_name = %s' % self.user_name)
-#         db.commit()
-#     return self
+def get_user_by_username(username):
+    with sql.Db_connection() as [db, cursor]:
+        user = sql.select(cursor, '*', 'user',
+                          "where user_name = '%s'" % username)
+        db.commit()
+    return user
+
+
+def insert_new_user(username, password, repassword, email):
+    with sql.Db_connection() as [db, cursor]:
+        user = sql.select(cursor, '*', 'user',
+                          "where user_name = '%s'" % username)
+        if user[0]:
+            ret = 'User already exists'
+        else:
+            if repassword == password:
+                sql.insert(cursor, 'user', [
+                           'user_name', 'password', 'mail'], [username, password, email])
+                ret = None
+            else:
+                ret = 'The two passwords are inconsistent'
+
+        db.commit()
+
+    return ret
