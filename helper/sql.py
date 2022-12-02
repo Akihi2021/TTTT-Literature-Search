@@ -21,7 +21,7 @@ class Db_connection():
     #             insert(cursor, 'video_label', ['video_id', 'label', 'create_time'], [k, str(v), now_time])
     #     db.commit()
 
-    def __init__(self, host, username, password, database, port=3306):
+    def __init__(self, host, username, password, database, port=33306):
         self.host = host
         self.port = port
         self.username = username
