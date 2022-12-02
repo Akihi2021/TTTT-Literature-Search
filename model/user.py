@@ -1,5 +1,5 @@
 from helper import sql
-from main import db
+from context import db
 from log import logger
 
 class User(db.Model):

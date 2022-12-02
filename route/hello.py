@@ -1,7 +1,7 @@
 from flask import request, Blueprint
 from flask_restx import fields, Api, Resource
 
-from main import swagger
+from context import swagger
 from rest import request_handle, Response, BaseResource
 
 ##################################################

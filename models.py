@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from log import logger
-from main import db
+from context import db
 
 
 # Job is template Model

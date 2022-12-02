@@ -3,7 +3,7 @@ from flask_restx import fields, Api, Resource
 from flask_login import LoginManager, UserMixin, login_user
 from uuid import uuid4
 
-from main import app, swagger
+from context import app, swagger
 from rest import request_handle, Response, BaseResource
 from log import logger
 from helper import sql

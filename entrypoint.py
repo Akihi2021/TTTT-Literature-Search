@@ -6,7 +6,7 @@ import config
 ##################################################
 
 import config
-from main import app
+from context import app
 from rest import AppJSONEncoder
 
 # NOTE: Add your swagger namespace here
