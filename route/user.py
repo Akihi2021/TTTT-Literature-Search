@@ -35,14 +35,7 @@ class LoginUser(UserMixin):
 
     @staticmethod
     def get(username):
-        with sql.Db_connection("127.70.14.86", "root",
-                               "Buaa2022", "tttt") as [db, cursor]:
-            user = sql.select(cursor, '*', 'user',
-                              'where user_name = %s' % username)
-            db.commit()
-        if not user:
-            return None
-        return LoginUser(user)
+        return LoginUser(user.get_user_by_username(username))
 
 
 @login_manager.user_loader
@@ -50,21 +43,25 @@ def load_user(username):
     return LoginUser.get(username)
 
 
-# TODO: Refer to route.hello.test-add.post for POST
+parser = swagger.parser()
+parser.add_argument('id', location='json', type=str,
+                    required=True, help='Userame')
+parser.add_argument('Email', location='json', type=str,
+                    required=False, help='Email')
+parser.add_argument('password', location='json', type=str,
+                    required=False, help='Password')
+parser.add_argument('repassword', location='json', type=str,
+                    required=False, help='rePassword')
+
+
 @user_ns.route('/forget_pass')
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
-    # @user_ns.param('Email', 'Email', type=str)
-    # @user_ns.param('id', 'username', type=str)
-    # @user_ns.param('password', 'password', type=str)
-    # @user_ns.param('rePassword', 'rePassword', type=str)
     @request_handle
     def post(self):
-        username = str(request.args['id'])
-        password = str(request.args['password'])
-        repassword = str(request.args['rePassword'])
-
-        ret = user.update_password(username, password, repassword)
+        args = parser.parse_args()
+        ret = user.update_password(
+            args['id'], args['password'], args['repassword'])
         resp = Response(data={})
         resp.data = ret
 
@@ -74,60 +71,46 @@ class ForgetPassword(BaseResource):
 @user_ns.route('/login')
 class PersonalLogin(BaseResource):
     @user_ns.doc('user login')
-    @user_ns.param('id', 'username', type=str)
-    @user_ns.param('password', 'password', type=str)
     @request_handle
     def post(self):
-        username = str(request.args['id'])
-        password = str(request.args['password'])
-        resp = Response()
-        user = load_user(username)
+        args = parser.parse_args()
+        resp = Response(data={})
+        loginuser = load_user(args['id'])
 
-        if user:
-            if user.verify_password(password):
+        if loginuser:
+            if loginuser[2] == args['password']:
                 login_user(user)
             else:
-                resp.msg = 'Wrong password'
+                ret = 'Wrong password'
         else:
-            resp.msg = 'User not found'
+            ret = 'User not found'
 
+        resp.data = ret
         return resp
 
 
 @user_ns.route('/register')
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
-    @user_ns.param('id', 'username', type=str)
-    @user_ns.param('password', 'password', type=str)
-    @user_ns.param('repassword', 'rePassword', type=str)
-    @user_ns.param('Email', 'Email', type=str)
     @request_handle
     def post(self):
-        email = str(request.args['Email'])
-        username = str(request.args['id'])
-        password = str(request.args['password'])
-        repassword = str(request.args['repassword'])
-        resp = Response()
+        args = parser.parse_args()
+        resp = Response(data={})
 
-        with sql.Db_connection("127.70.14.86", "root",
-                               "Buaa2022", "tttt") as [db, cursor]:
-            user = sql.select(cursor, '*', 'user',
-                              'where user_name = %s' % username)
-        if user:
-            resp.msg = 'User already exists'
+        if user.get_user_by_username(args['id']):
+            ret = 'User already registered'
         else:
-            if password == repassword:
-                with sql.Db_connection("127.70.14.86", "root",
-                                       "Buaa2022", "tttt") as [db, cursor]:
-                    user = sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
-                                      username, password, email])
-                    db.commit()
+            if args['password'] == args['repassword']:
+                ret = 'The two passwords are inconsistent'
             else:
-                resp.msg = 'The two passwords are inconsistent'
+                user.insert_new_user(
+                    args['id'], args['password'], args['email'])
 
+        resp.data = ret
         return resp
 
+
 @user_ns.route('/all')
-class PersonalRegister(BaseResource):
+class TestList(BaseResource):
     def get(self):
         return User.query_all()
