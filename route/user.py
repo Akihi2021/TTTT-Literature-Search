@@ -46,7 +46,7 @@ def load_user(username):
 parser = swagger.parser()
 parser.add_argument('id', location='json', type=str,
                     required=True, help='Userame')
-parser.add_argument('Email', location='json', type=str,
+parser.add_argument('email', location='json', type=str,
                     required=False, help='Email')
 parser.add_argument('password', location='json', type=str,
                     required=False, help='Password')
@@ -96,17 +96,10 @@ class PersonalRegister(BaseResource):
     def post(self):
         args = parser.parse_args()
         resp = Response(data={})
-
-        if user.get_user_by_username(args['id']):
-            ret = 'User already registered'
-        else:
-            if args['password'] == args['repassword']:
-                ret = 'The two passwords are inconsistent'
-            else:
-                user.insert_new_user(
-                    args['id'], args['password'], args['email'])
-
+        ret = user.insert_new_user(
+            args['id'], args['password'], args['repassword'], args['email'])
         resp.data = ret
+
         return resp
 
 

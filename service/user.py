@@ -24,7 +24,17 @@ def get_user_by_username(username):
     return user
 
 
-def insert_new_user(username, password, email):
+def insert_new_user(username, password, repassword, email):
     with sql.Db_connection() as [db, cursor]:
-        sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
-                   username, password, email])
+        user = sql.select(cursor, '*', 'user',
+                          'where user_name = %s' % username)
+        if user:
+            ret = 'User already exists'
+        else:
+            if repassword == password:
+                sql.insert(cursor, 'user', [
+                           'user_name', 'password', 'mail'], [username, password, email])
+            else:
+                ret = 'The two passwords are inconsistent'
+
+        return ret
