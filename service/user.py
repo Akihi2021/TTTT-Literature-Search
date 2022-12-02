@@ -16,14 +16,16 @@ def update_password(username, password, repassword):
                 ret = 'The two passwords are inconsistent'
         else:
             ret = 'User not found'
+        db.commit()
 
-        return ret
+    return ret
 
 
 def get_user_by_username(username):
     with sql.Db_connection() as [db, cursor]:
         user = sql.select(cursor, '*', 'user',
                           "where user_name = '%s'" % username)
+        db.commit()
     return user
 
 
@@ -41,4 +43,6 @@ def insert_new_user(username, password, repassword, email):
             else:
                 ret = 'The two passwords are inconsistent'
 
-        return ret
+        db.commit()
+
+    return ret
