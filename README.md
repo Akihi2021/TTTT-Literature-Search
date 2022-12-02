@@ -5,10 +5,31 @@ https://github.com/Akihi2021/TTTT-Literature-Search
 https://hub.docker.com/repository/docker/vinokkk/tttt/
 
 # Swagger 
-Path: localhost:5000/v1/swagger
+http://localhost:5000/v1/swagger
 
-# Docker Commands
-## Workflow
+# RUN
+When run successfully you should see swagger in the path above
+
+## Run on local machine 
+1. clone codes 
+
+`git clone https://github.com/Akihi2021/TTTT-Literature-Search`
+3. install requirements 
+
+`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`
+3. run project 
+
+`python entrypoint.py`
+## Run with docker 
+1. pull docker image
+`docker pull vinokkk/tttt:{VERSION_TAG}`
+
+2. run docker image 
+`docker run -it -p 5000:5000 vinokkk/tttt:{VERSION_TAG} `
+
+   
+# Docker Related Questions
+### Workflow
 - For Developer
 1. Build
 2. Run
@@ -17,18 +38,18 @@ Path: localhost:5000/v1/swagger
 1. Pull 
 2. Run 
 
-## Docker Pull
+### Docker Pull
 `docker pull vinokkk/tttt:{VERSION_TAG}`
 
-## Docker Build
+### Docker Build
 NOTE: need to run in the project root path
 
 `docker build -t vinokkk/tttt:{VERSION_TAG} .`
 
-## Docker Push 
+### Docker Push 
 `docker push vinokkk/tttt:{VERSION_TAG}`
 
-## Docker Run
+### Docker Run
 `docker run -it -p 5000:5000 vinokkk/tttt:{VERSION_TAG} `
 
 NOTE: 
@@ -36,9 +57,7 @@ NOTE:
 2. When run successfully, you should see swagger on localhost:5000/v1/swagger
 
 
-
-
-## Docker Run With Codes Mounted
+### Docker Run With Codes Mounted
 `docker run -it -p 5000:5000 -v {ABSOLUTE_PATH_OF_YOUR_APP}:/app vinokkk/tttt:{VERSION_TAG}`
 
 e.g. 
