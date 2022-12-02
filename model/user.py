@@ -1,5 +1,5 @@
 from helper import sql
-from context import db
+from context import app, db
 from log import logger
 
 class User(db.Model):
@@ -103,3 +103,9 @@ class User(db.Model):
                 self.institution = self.institution.decode('utf-8')
 
         return self
+
+
+if __name__ == "__main__":
+    # NOTE: add `with app.app_context():` to test locally
+    with app.app_context():
+        User.query_all()
