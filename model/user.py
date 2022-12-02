@@ -1,6 +1,7 @@
 from helper import sql
 from context import app, db
 from log import logger
+from config import *
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -36,8 +37,7 @@ class User(db.Model):
     @classmethod
     def create_user(cls, user_name, password, mail):
         obj = cls(user_name=user_name, password=password, mail=mail)
-        with sql.Db_connection('127.70.14.86', 'root',
-                               'Buaa2022', 'tttt') as [db, cursor]:
+        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
             sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
                 obj.user_name, obj.password, obj.mail])
             db.commit()
@@ -45,8 +45,7 @@ class User(db.Model):
 
     @classmethod
     def query_by_username_and_email(cls, user_name, email):
-        with sql.Db_connection('127.70.14.86', 'root',
-                               'Buaa2022', 'tttt') as [db, cursor]:
+        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
             obj = sql.select(cursor, ['*'], 'user',
                              'where user_name = %s and mail = %s' % (user_name, email))
         if obj:
@@ -56,8 +55,7 @@ class User(db.Model):
 
     @classmethod
     def query_by_username(cls, user_name):
-        with sql.Db_connection('127.70.14.86', 'root',
-                               'Buaa2022', 'tttt') as [db, cursor]:
+        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
             obj = sql.select(cursor, ['*'], 'user',
                              'where user_name = %s' % user_name)
         if obj:
@@ -68,8 +66,8 @@ class User(db.Model):
     @classmethod
     def update_password(self, password):
         self.password = password
-        with sql.Db_connection('127.70.14.86', 'root',
-                               'Buaa2022', 'tttt', 3306) as [db, cursor]:
+        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
+
             obj = sql.update(cursor, ['password'], 'user', [password],
                              'where user_name = %s' % self.user_name)
             db.commit()
@@ -109,4 +107,5 @@ if __name__ == "__main__":
     # NOTE: add `with app.app_context():` to test locally
 
     with app.app_context():
-        User.query_all()
+        print(User.query_all())
+        # print(User.query_by_username("kim"))
