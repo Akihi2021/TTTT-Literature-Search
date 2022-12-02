@@ -34,44 +34,6 @@ class User(db.Model):
         logger.info('Start to retrieve all object from DB')
         return [item.decode() for item in cls.query.all()]
 
-    @classmethod
-    def create_user(cls, user_name, password, mail):
-        obj = cls(user_name=user_name, password=password, mail=mail)
-        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
-            sql.insert(cursor, 'user', ['user_name', 'password', 'mail'], [
-                obj.user_name, obj.password, obj.mail])
-            db.commit()
-        return obj
-
-    @classmethod
-    def query_by_username_and_email(cls, user_name, email):
-        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
-            obj = sql.select(cursor, ['*'], 'user',
-                             'where user_name = %s and mail = %s' % (user_name, email))
-        if obj:
-            obj = cls(user_name=obj['user_name'],
-                      password=obj['password'], mail=obj['mail'])
-        return obj.decode()
-
-    @classmethod
-    def query_by_username(cls, user_name):
-        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
-            obj = sql.select(cursor, ['*'], 'user',
-                             'where user_name = %s' % user_name)
-        if obj:
-            obj = cls(user_name=obj['user_name'],
-                      password=obj['password'], mail=obj['mail'])
-        return obj.decode()
-
-    @classmethod
-    def update_password(self, password):
-        self.password = password
-        with sql.Db_connection(db_host, db_user, db_passwd, db_database) as [db, cursor]:
-
-            obj = sql.update(cursor, ['password'], 'user', [password],
-                             'where user_name = %s' % self.user_name)
-            db.commit()
-        return self
 
     def decode(self):
         if self:
