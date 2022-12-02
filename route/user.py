@@ -22,10 +22,10 @@ login_manager.login_view = 'login'
 
 class LoginUser(UserMixin):
     def __init__(self, user):
-        self.username = user.decode().user_name
-        self.password = user.decode().password
-        self.email = user.decode().email
-        self.id = user.id
+        self.username = user[1]
+        self.password = user[2]
+        self.email = user[4]
+        self.id = user[0]
 
     def verify_password(self, password):
         return password == self.password
@@ -33,9 +33,25 @@ class LoginUser(UserMixin):
     def get_id(self):
         return self.id
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
     @staticmethod
     def get(username):
-        return LoginUser(user.get_user_by_username(username))
+        loginuser = user.get_user_by_username(username)
+        if loginuser[0]:
+            return LoginUser(loginuser[1][0])
+        else:
+            return None
 
 
 @login_manager.user_loader
@@ -45,7 +61,7 @@ def load_user(username):
 
 parser = swagger.parser()
 parser.add_argument('id', location='json', type=str,
-                    required=True, help='Userame')
+                    required=False, help='Userame')
 parser.add_argument('email', location='json', type=str,
                     required=False, help='Email')
 parser.add_argument('password', location='json', type=str,
@@ -57,11 +73,12 @@ parser.add_argument('repassword', location='json', type=str,
 @user_ns.route('/forget_pass')
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
+    @user_ns.expect(parser)
     @request_handle
     def post(self):
         args = parser.parse_args()
         ret = user.update_password(
-            args['id'], args['password'], args['repassword'])
+            args["id"], args["password"], args["repassword"])
         resp = Response(data={})
         resp.data = ret
 
@@ -71,6 +88,7 @@ class ForgetPassword(BaseResource):
 @user_ns.route('/login')
 class PersonalLogin(BaseResource):
     @user_ns.doc('user login')
+    @user_ns.expect(parser)
     @request_handle
     def post(self):
         args = parser.parse_args()
@@ -78,9 +96,12 @@ class PersonalLogin(BaseResource):
         loginuser = load_user(args['id'])
 
         if loginuser:
-            if loginuser[2] == args['password']:
-                login_user(user)
+            if loginuser.password == args['password']:
+                login_user(loginuser)
+                ret = {'id': loginuser.id, 'username': loginuser.username}
             else:
+                print(loginuser.password)
+                print(args['password'])
                 ret = 'Wrong password'
         else:
             ret = 'User not found'
@@ -92,6 +113,7 @@ class PersonalLogin(BaseResource):
 @user_ns.route('/register')
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
+    @user_ns.expect(parser)
     @request_handle
     def post(self):
         args = parser.parse_args()
