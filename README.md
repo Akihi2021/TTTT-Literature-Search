@@ -25,9 +25,11 @@ When run successfully you should see swagger in the path above
 
 ## Run with docker 
 1. pull docker image
+
 `docker pull vinokkk/tttt:{VERSION_TAG}`
 
 2. run docker image 
+
 `docker run -it -p 5000:5000 vinokkk/tttt:{VERSION_TAG} `
 
    
