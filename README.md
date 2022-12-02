@@ -14,12 +14,15 @@ When run successfully you should see swagger in the path above
 1. clone codes 
 
 `git clone https://github.com/Akihi2021/TTTT-Literature-Search`
-3. install requirements 
+
+2. install requirements 
 
 `pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`
+
 3. run project 
 
 `python entrypoint.py`
+
 ## Run with docker 
 1. pull docker image
 `docker pull vinokkk/tttt:{VERSION_TAG}`
