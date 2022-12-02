@@ -12,10 +12,10 @@ swagger = Api(app_blueprint, version='1.0', doc='/swagger', title='TTTT Literatu
 app.register_blueprint(app_blueprint)
 CORS(app)  # 接受跨域
 
+
 app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://'+config.db_user + ':' + config.db_passwd + \
     '@'+config.db_host+':' + \
     str(config.db_port)+'/'+config.db_database+'?charset=utf8'
+db = SQLAlchemy(app)
 
-db = SQLAlchemy()
-# db = SQLAlchemy(app)

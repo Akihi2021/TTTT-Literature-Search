@@ -3,10 +3,12 @@ from flask_restx import fields, Api, Resource
 from flask_login import LoginManager, UserMixin, login_user
 from uuid import uuid4
 
-from main import app, swagger
+from context import app, swagger
 from rest import request_handle, Response, BaseResource
 from log import logger
 from helper import sql
+from model.user import User
+from service import user
 
 ##################################################
 # Demo route with URL query
@@ -48,32 +50,24 @@ def load_user(username):
     return LoginUser.get(username)
 
 
+# TODO: Refer to route.hello.test-add.post for POST
 @user_ns.route('/forget_pass')
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
-    @user_ns.param('Email', 'Email', type=str)
-    @user_ns.param('id', 'username', type=str)
-    @user_ns.param('password', 'password', type=str)
-    @user_ns.param('rePassword', 'rePassword', type=str)
+    # @user_ns.param('Email', 'Email', type=str)
+    # @user_ns.param('id', 'username', type=str)
+    # @user_ns.param('password', 'password', type=str)
+    # @user_ns.param('rePassword', 'rePassword', type=str)
     @request_handle
     def post(self):
-        email = str(request.args['Email'])
         username = str(request.args['id'])
         password = str(request.args['password'])
         repassword = str(request.args['rePassword'])
-        resp = Response()
 
-        with sql.Db_connection("127.70.14.86", "root",
-                               "Buaa2022", "tttt") as [db, cursor]:
-            user = sql.select(cursor, '*', 'user',
-                              'where user_name = %s' % username)
-            if user:
-                if repassword == password:
-                    sql.update(cursor, ['password'], 'user', [password])
-                else:
-                    resp.msg = 'The two passwords are inconsistent'
-            else:
-                resp.msg = 'User not found'
+        ret = user.update_password(username, password, repassword)
+        resp = Response(data={})
+        resp.data = ret
+
         return resp
 
 
@@ -132,3 +126,8 @@ class PersonalRegister(BaseResource):
                 resp.msg = 'The two passwords are inconsistent'
 
         return resp
+
+@user_ns.route('/all')
+class PersonalRegister(BaseResource):
+    def get(self):
+        return User.query_all()

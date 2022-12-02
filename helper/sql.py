@@ -1,10 +1,12 @@
 import pymysql
+from config import *
 
 ##################################################
 ## sql database utils
 ##################################################
 
-class Db_connection():
+
+class Db_connection:
     # Demo:
     # A Connection to db can be initialized as following
 
@@ -21,7 +23,7 @@ class Db_connection():
     #             insert(cursor, 'video_label', ['video_id', 'label', 'create_time'], [k, str(v), now_time])
     #     db.commit()
 
-    def __init__(self, host, username, password, database, port=3306):
+    def __init__(self, host=db_host, username=db_user, password=db_passwd, database=db_database, port=db_port):
         self.host = host
         self.port = port
         self.username = username

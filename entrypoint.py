@@ -5,15 +5,12 @@ import config
 # project main entrypoint
 ##################################################
 
-from flask import Blueprint
-from flask_api import FlaskAPI
-from flask_sqlalchemy import SQLAlchemy
-from flask_restx import Api
-from flask_cors import CORS
-from routes import hello, paper
 import config
-from main import app, swagger
+from context import app
 from rest import AppJSONEncoder
+
+# NOTE: Add your swagger namespace here
+from route import hello, paper, user
 
 if __name__ == "__main__":
     # run Flask App

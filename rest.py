@@ -4,7 +4,7 @@ from flask_restx import fields, Resource
 from json import JSONEncoder
 from datetime import date, datetime
 
-from main import swagger
+from context import swagger
 from log import logger
 
 ##################################################
