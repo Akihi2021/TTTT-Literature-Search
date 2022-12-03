@@ -55,6 +55,7 @@ def login(id, password):
     success = True
     msg = "success"
     user = load_user(id)
+    code = 200
 
     if user:
         if user.password == password:
@@ -63,11 +64,13 @@ def login(id, password):
             logger.info("Expect:{}, Got:{}".format(user.password, password))
             msg = 'Wrong password'
             success = False
+            code = 0
     else:
         msg = 'User not found'
         success = False
+        code = 800
 
-    return msg, success, user
+    return msg, success, user, code
 
 
 def update_password(username, password, repassword):
