@@ -9,12 +9,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
 class LoginUser(UserMixin):
     def __init__(self, user):
         self.username = user[1]
         self.password = user[2]
         self.email = user[4]
         self.id = user[0]
+        self.is_associated = True if get_associated_portal(user[0])[
+            0] else False
 
     def verify_password(self, password):
         return password == self.password
@@ -64,7 +67,7 @@ def login(id, password):
         msg = 'User not found'
         success = False
 
-    return msg, success
+    return msg, success, user
 
 
 def update_password(username, password, repassword):
@@ -95,6 +98,13 @@ def get_user_by_username(username):
                           "where user_name = '%s'" % username)
         db.commit()
     return user
+
+
+def get_associated_portal(id):
+    with sql.Db_connection() as [db, cursor]:
+        portal = sql.select(cursor, '*', 'portal', 'where user_id = %d' % id)
+        db.commit()
+    return portal
 
 
 def insert_new_user(username, password, repassword, email):

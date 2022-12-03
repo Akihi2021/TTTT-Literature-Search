@@ -78,14 +78,24 @@ class PersonalLogin(BaseResource):
     def post(self):
         args = login_parser.parse_args()
 
-        msg, success = user.login(args['username'],
-                                  args['password'])
+        msg, success, loginuser = user.login(args['username'],
+                                             args['password'])
 
-        resp = Response(
-            msg=msg,
-            data=dict(
-                success=success
-            ))
+        if loginuser:
+            resp = Response(
+                msg=msg,
+                data=dict(
+                    success=success,
+                    username=loginuser.username,
+                    userid=str(loginuser.id),
+                    is_associated=loginuser.is_associated
+                ))
+        else:
+            resp = Response(
+                msg=msg,
+                data=dict(
+                    success=success
+                ))
         return resp
 
 
@@ -99,9 +109,9 @@ class PersonalRegister(BaseResource):
         args = user_parser.parse_args()
 
         msg, success = user.insert_new_user(args['username'],
-                                   args['password'],
-                                   args['repassword'],
-                                   args['email'])
+                                            args['password'],
+                                            args['repassword'],
+                                            args['email'])
 
         resp = Response(
             msg=msg,
