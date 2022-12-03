@@ -30,10 +30,10 @@ user_parser.add_argument('repassword', location='json', type=str,
                          required=False, help='rePassword')
 
 forget_parser = user_parser.copy()
-forget_parser.remove_argument("repassword")
+forget_parser.remove_argument("email")
 
 login_parser = forget_parser.copy()
-login_parser.remove_argument("email")
+login_parser.remove_argument("repassword")
 ####################################################################################################
 
 ####################################################################################################
@@ -52,6 +52,7 @@ bool_response_model = user_ns.inherit("Login", response_model, {
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
     @user_ns.expect(forget_parser)
+    @user_ns.response(200, 'success', bool_response_model)
     @request_handle
     def post(self):
         args = forget_parser.parse_args()
@@ -92,6 +93,7 @@ class PersonalLogin(BaseResource):
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
     @user_ns.expect(user_parser)
+    @user_ns.response(200, 'success', bool_response_model)
     @request_handle
     def post(self):
         args = user_parser.parse_args()
