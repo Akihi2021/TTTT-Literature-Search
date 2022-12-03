@@ -20,7 +20,7 @@ swagger.add_namespace(user_ns)
 # LINK: https://flask-restx.readthedocs.io/en/latest/parsing.html#parser-inheritance
 
 user_parser = swagger.parser()
-user_parser.add_argument('id', location='json', type=str,
+user_parser.add_argument('username', location='json', type=str,
                          required=False, help='Userame')
 user_parser.add_argument('email', location='json', type=str,
                          required=False, help='Email')
@@ -56,7 +56,7 @@ class ForgetPassword(BaseResource):
     @request_handle
     def post(self):
         args = forget_parser.parse_args()
-        msg, success = user.update_password(args["id"],
+        msg, success = user.update_password(args["username"],
                                             args["password"],
                                             args["repassword"])
 
@@ -78,14 +78,24 @@ class PersonalLogin(BaseResource):
     def post(self):
         args = login_parser.parse_args()
 
-        msg, success = user.login(args['id'],
-                                  args['password'])
+        msg, success, loginuser = user.login(args['username'],
+                                             args['password'])
 
-        resp = Response(
-            msg=msg,
-            data=dict(
-                success=success
-            ))
+        if loginuser:
+            resp = Response(
+                msg=msg,
+                data=dict(
+                    success=success,
+                    username=loginuser.username,
+                    userid=str(loginuser.id),
+                    is_associated=loginuser.is_associated
+                ))
+        else:
+            resp = Response(
+                msg=msg,
+                data=dict(
+                    success=success
+                ))
         return resp
 
 
@@ -98,10 +108,10 @@ class PersonalRegister(BaseResource):
     def post(self):
         args = user_parser.parse_args()
 
-        msg, success = user.insert_new_user(args['id'],
-                                   args['password'],
-                                   args['repassword'],
-                                   args['email'])
+        msg, success = user.insert_new_user(args['username'],
+                                            args['password'],
+                                            args['repassword'],
+                                            args['email'])
 
         resp = Response(
             msg=msg,
