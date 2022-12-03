@@ -78,10 +78,10 @@ class PersonalLogin(BaseResource):
     def post(self):
         args = login_parser.parse_args()
 
-        msg, success, loginuser = user.login(args['username'],
-                                             args['password'])
+        msg, success, loginuser, code = user.login(args['username'],
+                                                   args['password'])
 
-        if loginuser:
+        if success:
             resp = Response(
                 msg=msg,
                 data=dict(
@@ -92,6 +92,7 @@ class PersonalLogin(BaseResource):
                 ))
         else:
             resp = Response(
+                code=code,
                 msg=msg,
                 data=dict(
                     success=success
