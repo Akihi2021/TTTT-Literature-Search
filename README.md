@@ -11,6 +11,7 @@ http://localhost:5000/v1/swagger
 When run successfully you should see swagger in the path above
 
 ## Run on local machine 
+0. Install Python Interpreter (v3.8)
 1. clone codes 
 
 `git clone https://github.com/Akihi2021/TTTT-Literature-Search`
