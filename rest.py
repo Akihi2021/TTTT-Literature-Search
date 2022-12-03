@@ -27,6 +27,8 @@ class AppJSONEncoder(JSONEncoder):
             return obj.__dict__
         if isinstance(obj, (date, datetime)):
             return obj.__str__()
+        if isinstance(obj, bytes):
+            return obj
         return JSONEncoder.default(self, obj)
 
 
@@ -64,6 +66,10 @@ response_model = swagger.model('Response', {
     'code': fields.Integer(description='response code'),
     'msg': fields.String(description='response message'),
     'data': fields.Raw
+})
+
+bool_model = swagger.model("Result", model={
+    "success": fields.Boolean
 })
 
 
