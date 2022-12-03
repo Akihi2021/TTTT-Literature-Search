@@ -60,7 +60,10 @@ class ForgetPassword(BaseResource):
                                             args["password"],
                                             args["repassword"])
 
+        code = 200 if success else 0
+
         resp = Response(
+            code=code,
             msg=msg,
             data=dict(
                 success=success
@@ -114,7 +117,10 @@ class PersonalRegister(BaseResource):
                                             args['repassword'],
                                             args['email'])
 
+        code = 200 if success else 0
+
         resp = Response(
+            code=code,
             msg=msg,
             data=dict(
                 success=success
