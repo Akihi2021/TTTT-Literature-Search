@@ -77,19 +77,18 @@ def update_password(username, password, repassword):
     with sql.Db_connection() as [db, cursor]:
         user = sql.select(cursor, '*', 'user',
                           "where user_name = '%s'" % username)
-        success = True
+        success = False
         msg = "success"
 
         if user[0]:
             if repassword == password:
                 sql.update(cursor, ['password'], '`user`', [
                     password], "where user_name = '%s'" % username, True)
+                success = True
             else:
                 msg = 'The two passwords are inconsistent'
-                success = False
         else:
             msg = 'User not found'
-            success = False
         db.commit()
 
     return msg, success
@@ -115,16 +114,16 @@ def insert_new_user(username, password, repassword, email):
         user = sql.select(cursor, '*', 'user',
                           "where user_name = '%s'" % username)
 
-        success = True
+        success = False
         msg = "success"
 
         if user[0]:
             msg = 'User already exists'
-            success = False
         else:
             if repassword == password:
                 sql.insert(cursor, 'user', [
                            'user_name', 'password', 'mail'], [username, password, email])
+                success = True
             else:
                 msg = 'The two passwords are inconsistent'
 
