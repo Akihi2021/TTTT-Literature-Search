@@ -68,13 +68,8 @@ response_model = swagger.model('Response', {
     'data': fields.Raw
 })
 
-bool_model = swagger.model("Result", model={
-    "success": fields.Boolean
-})
-
-
 @swagger.response(200, 'ok', model=response_model)
-@swagger.response(500, 'error', model=response_model)
+# @swagger.response(500, 'error', model=response_model)
 class BaseResource(Resource):
     '''base rest api router class
     '''
