@@ -3,7 +3,7 @@ from flask_restx import fields, Api, Resource
 from uuid import uuid4
 
 from context import app, swagger
-from rest import request_handle, Response, BaseResource, response_model, bool_model
+from rest import request_handle, Response, BaseResource, response_model
 from log import logger
 from helper import sql
 from model.user import User
@@ -42,9 +42,24 @@ login_parser.remove_argument("repassword")
 #       2. Use `namespace.inherit` to inherit from BaseModel(with code, msg data), to overwrite `data` part
 #       3. Use `fields.Nested for nested Data
 # LINK: https://flask-restx.readthedocs.io/en/latest/marshalling.html#nested-field
-bool_response_model = user_ns.inherit("Login", response_model, {
-    "data": fields.Nested(bool_model)
+success_data_model = swagger.model("SuccessData", model={
+    "success": fields.Boolean(False)
 })
+
+success_response_model = user_ns.inherit("SuccessResponse", response_model, {
+    "data": fields.Nested(success_data_model)
+})
+
+login_success_data_model = user_ns.inherit("LoginSuccessData", success_data_model, {
+    "username": fields.String,
+    "userid": fields.Integer,
+    "is_associated": fields.Boolean
+})
+
+login_success_response_model = user_ns.inherit("LoginSuccessResponse", response_model, {
+    "data": fields.Nested(login_success_data_model)
+})
+
 ####################################################################################################
 
 
@@ -52,7 +67,7 @@ bool_response_model = user_ns.inherit("Login", response_model, {
 class ForgetPassword(BaseResource):
     @user_ns.doc('change password')
     @user_ns.expect(forget_parser)
-    @user_ns.response(200, 'success', bool_response_model)
+    @user_ns.response(200, 'success', success_response_model)
     @request_handle
     def post(self):
         args = forget_parser.parse_args()
@@ -76,7 +91,8 @@ class ForgetPassword(BaseResource):
 class PersonalLogin(BaseResource):
     @user_ns.doc('user login')
     @user_ns.expect(login_parser)
-    @user_ns.response(200, 'success', bool_response_model)
+    @user_ns.response(200, 'success', login_success_response_model)
+    @user_ns.response(800, 'fail', success_response_model)
     @request_handle
     def post(self):
         args = login_parser.parse_args()
@@ -107,7 +123,7 @@ class PersonalLogin(BaseResource):
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
     @user_ns.expect(user_parser)
-    @user_ns.response(200, 'success', bool_response_model)
+    @user_ns.response(200, 'success', success_response_model)
     @request_handle
     def post(self):
         args = user_parser.parse_args()
