@@ -20,7 +20,7 @@ swagger.add_namespace(user_ns)
 # LINK: https://flask-restx.readthedocs.io/en/latest/parsing.html#parser-inheritance
 
 login_parser = swagger.parser()
-login_parser.add_argument('id', type=str, required=True, help='Userame')
+login_parser.add_argument('username', type=str, required=True, help='Userame')
 login_parser.add_argument('password', type=str, required=True, help='Password')
 
 forget_parser = login_parser.copy()
