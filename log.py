@@ -7,7 +7,7 @@ from logging.handlers import TimedRotatingFileHandler
 # logging config
 ##################################################
 
-work_dir = './logs'
+work_dir = '../logs'
 log_path = os.path.join(work_dir, 'tttt.log')
 if not os.path.isdir(work_dir):
     os.mkdir(work_dir)
