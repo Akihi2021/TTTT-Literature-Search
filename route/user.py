@@ -19,21 +19,15 @@ swagger.add_namespace(user_ns)
 #       2. Use `expect` to specify expected payload
 # LINK: https://flask-restx.readthedocs.io/en/latest/parsing.html#parser-inheritance
 
-user_parser = swagger.parser()
-user_parser.add_argument('id', location='json', type=str,
-                         required=False, help='Userame')
-user_parser.add_argument('email', location='json', type=str,
-                         required=False, help='Email')
-user_parser.add_argument('password', location='json', type=str,
-                         required=False, help='Password')
-user_parser.add_argument('repassword', location='json', type=str,
-                         required=False, help='rePassword')
+login_parser = swagger.parser()
+login_parser.add_argument('id', type=str, required=True, help='Userame')
+login_parser.add_argument('password', type=str, required=True, help='Password')
 
-forget_parser = user_parser.copy()
-forget_parser.remove_argument("email")
+forget_parser = login_parser.copy()
+forget_parser.add_argument('repassword', type=str, required=True, help='rePassword')
 
-login_parser = forget_parser.copy()
-login_parser.remove_argument("repassword")
+register_parser = forget_parser.copy()
+register_parser.add_argument('email', type=str, required=True, help='Email')
 ####################################################################################################
 
 ####################################################################################################
@@ -92,11 +86,11 @@ class PersonalLogin(BaseResource):
 @user_ns.route('/register')
 class PersonalRegister(BaseResource):
     @user_ns.doc('user register')
-    @user_ns.expect(user_parser)
+    @user_ns.expect(register_parser)
     @user_ns.response(200, 'success', bool_response_model)
     @request_handle
     def post(self):
-        args = user_parser.parse_args()
+        args = register_parser.parse_args()
 
         msg, success = user.insert_new_user(args['id'],
                                    args['password'],
