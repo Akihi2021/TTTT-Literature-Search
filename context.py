@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api
 from flask_cors import CORS
 from flask import Blueprint
+from diophila import OpenAlex
+
+
 import config
 
 # Create Flask App and Swagger UI
@@ -20,3 +23,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://'+config.db_user + ':' 
     str(config.db_port)+'/'+config.db_database+'?charset=utf8'
 app.secret_key = 'Buaa2022'
 db = SQLAlchemy(app)
+
+openAlex = OpenAlex()
+
