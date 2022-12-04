@@ -14,7 +14,6 @@ class PaperRecommend(BaseResource):
     @recommend_ns.param(name="num", description="number of papers to be recommended", type=int)
     @request_handle
     def get(self):
-
         data = []
         for _ in range(int(request.args["num"])):
             data.append(openAlex.get_random_work())
@@ -22,6 +21,7 @@ class PaperRecommend(BaseResource):
         resp = Response(
             data=data
         )
+
         return resp
 
 
@@ -38,6 +38,7 @@ class AuthorRecommend(BaseResource):
         resp = Response(
             data=data
         )
+
         return resp
 
 
