@@ -33,7 +33,7 @@ class AuthorRecommend(BaseResource):
     def get(self):
         data = []
         for _ in range(int(request.args["num"])):
-            data.append(openAlex.get_random_work())
+            data.append(openAlex.get_random_author())
 
         resp = Response(
             data=data
