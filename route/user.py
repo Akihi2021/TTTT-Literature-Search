@@ -24,10 +24,14 @@ login_parser.add_argument('username', type=str, required=True, help='Userame')
 login_parser.add_argument('password', type=str, required=True, help='Password')
 
 forget_parser = login_parser.copy()
-forget_parser.add_argument('repassword', type=str, required=True, help='rePassword')
+forget_parser.add_argument('repassword', type=str,
+                           required=True, help='rePassword')
 
 register_parser = forget_parser.copy()
 register_parser.add_argument('email', type=str, required=True, help='Email')
+
+id_parser = swagger.parser()
+id_parser.add_argument('user_id', type=int, required=True, help='UserId')
 ####################################################################################################
 
 ####################################################################################################
@@ -54,6 +58,16 @@ login_success_response_model = user_ns.inherit("LoginSuccessResponse", response_
     "data": fields.Nested(login_success_data_model)
 })
 
+user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
+    "username": fields.String,
+    "org": fields.String,
+    "is_associated": fields.Boolean,
+    "department": fields.String
+})
+
+user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
+    "data": fields.Nested(user_info_data_model)
+})
 ####################################################################################################
 
 
@@ -139,7 +153,36 @@ class PersonalRegister(BaseResource):
         return resp
 
 
-@user_ns.route('/all')
+@user_ns.route('/check_my_info ')
+class CheckInfo(BaseResource):
+    @user_ns.doc('check user info')
+    @user_ns.expect(id_parser)
+    @user_ns.response(200, 'success', user_info_response_model)
+    @request_handle
+    def post(self):
+        args = id_parser.parse_args()
+
+        msg, success, infouser, portal = user.get_user_info(args['user_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success,
+                username=infouser[1] if success else None,
+                org=infouser[8] if success else None,
+                is_associated=(True if portal[0]
+                               else False) if success else None,
+                department=infouser[8] if success else None,
+                hobby=infouser[9] if success else None
+            )
+        )
+        return resp
+
+
+@ user_ns.route('/all')
 class TestList(BaseResource):
     def get(self):
         return User.query_all()

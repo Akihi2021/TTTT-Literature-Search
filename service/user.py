@@ -102,6 +102,13 @@ def get_user_by_username(username):
     return user
 
 
+def get_user_by_userid(userid):
+    with sql.Db_connection() as [db, cursor]:
+        user = sql.select(cursor, '*', 'user', "where id = %d" % userid)
+        db.commit()
+    return user
+
+
 def get_associated_portal(id):
     with sql.Db_connection() as [db, cursor]:
         portal = sql.select(cursor, '*', 'portal', 'where user_id = %d' % id)
@@ -130,3 +137,17 @@ def insert_new_user(username, password, repassword, email):
         db.commit()
 
     return msg, success
+
+
+def get_user_info(user_id):
+    success = False
+    msg = "success"
+    user = get_user_by_userid(user_id)
+
+    if (user[0]):
+        success = True
+        portal = get_associated_portal(user[1][0][0])
+        return msg, success, user[1][0], portal
+    else:
+        msg = 'The user does not exist'
+        return msg, success, None, None
