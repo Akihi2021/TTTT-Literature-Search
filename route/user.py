@@ -32,6 +32,36 @@ register_parser.add_argument('email', type=str, required=True, help='Email')
 
 id_parser = swagger.parser()
 id_parser.add_argument('user_id', type=int, required=True, help='UserId')
+
+history_parser = id_parser.copy()
+history_parser.add_argument(
+    'paper_id', type=str, required=True, help='latest viewed paper')
+
+favor_parser = id_parser.copy()
+favor_parser.add_argument('paper_id', type=str,
+                          required=True, help='latest favored paper')
+
+follow_parser = id_parser.copy()
+follow_parser.add_argument('expert_id', type=str,
+                           required=True, help='latest followed expert')
+
+update_parser = id_parser.copy()
+update_parser.add_argument('user_name', type=str,
+                           required=False, default=None, help='username')
+update_parser.add_argument(
+    'gender', type=str, required=False, default=None, help='gender')
+update_parser.add_argument(
+    'email', type=str, required=False, default=None, help='email')
+update_parser.add_argument(
+    'phone', type=str, required=False, default=None, help='phone')
+update_parser.add_argument(
+    'major', type=str, required=False, default=None, help='major')
+update_parser.add_argument(
+    'campus', type=str, required=False, default=None, help='campus')
+update_parser.add_argument('institution', type=str,
+                           required=False, default=None, help='institution')
+update_parser.add_argument(
+    'hobby', type=str, required=False, default=None, help='hobby')
 ####################################################################################################
 
 ####################################################################################################
@@ -60,9 +90,17 @@ login_success_response_model = user_ns.inherit("LoginSuccessResponse", response_
 
 user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     "username": fields.String,
+    "gender": fields.String,
+    "email": fields.String,
+    "phone": fields.String,
+    "major": fields.String,
+    "campus": fields.String,
     "org": fields.String,
     "is_associated": fields.Boolean,
-    "department": fields.String
+    "department": fields.String,
+    "history": fields.List(fields.String),
+    "follow": fields.List(fields.String),
+    "favor": fields.List(fields.String)
 })
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
@@ -162,7 +200,8 @@ class CheckInfo(BaseResource):
     def post(self):
         args = id_parser.parse_args()
 
-        msg, success, infouser, portal = user.get_user_info(args['user_id'])
+        msg, success, infouser, portal = user.get_user_info(
+            args['user_id'])
 
         code = 200 if success else 0
 
@@ -172,11 +211,125 @@ class CheckInfo(BaseResource):
             data=dict(
                 success=success,
                 username=infouser[1] if success else None,
+                gender=infouser[3] if success else None,
+                email=infouser[4] if success else None,
+                phone=infouser[5] if success else None,
+                major=infouser[6] if success else None,
+                campus=infouser[7] if success else None,
                 org=infouser[8] if success else None,
                 is_associated=(True if portal[0]
                                else False) if success else None,
                 department=infouser[8] if success else None,
-                hobby=infouser[9] if success else None
+                hobby=infouser[9] if success else None,
+                history=(eval(infouser[10])if infouser[10]
+                         else []) if success else None,
+                follow=(eval(infouser[11])if infouser[11]
+                        else []) if success else None,
+                favor=(eval(infouser[12]) if infouser[12]
+                       else []) if success else None
+            )
+        )
+        return resp
+
+
+@user_ns.route('/update_viewed_history')
+class UpdateViewedHistory(BaseResource):
+    @user_ns.doc('update user\'s viewed history')
+    @user_ns.expect(history_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = history_parser.parse_args()
+
+        msg, success = user.update_history(args['paper_id'], args['user_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
+            )
+        )
+        return resp
+
+
+@user_ns.route('/update_following')
+class UpdateViewedHistory(BaseResource):
+    @user_ns.doc('update user\'s following list')
+    @user_ns.expect(follow_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = follow_parser.parse_args()
+
+        msg, success = user.update_following(
+            args['expert_id'], args['user_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
+            )
+        )
+        return resp
+
+
+@user_ns.route('/update_favor_list')
+class UpdateViewedHistory(BaseResource):
+    @user_ns.doc('update user\'s favor list')
+    @user_ns.expect(favor_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = favor_parser.parse_args()
+
+        msg, success = user.update_favor(args['paper_id'], args['user_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
+            )
+        )
+        return resp
+
+
+@user_ns.route('/update_user_info')
+class UpdateUserInfo(BaseResource):
+    @user_ns.doc('update user\'s info')
+    @user_ns.expect(update_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = update_parser.parse_args()
+
+        info = []
+        info.append(args['user_name'])
+        info.append(args['gender'])
+        info.append(args['email'])
+        info.append(args['phone'])
+        info.append(args['major'])
+        info.append(args['campus'])
+        info.append(args['institution'])
+        info.append(args['hobby'])
+
+        msg, success = user.update_info(args['user_id'], info)
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
             )
         )
         return resp
