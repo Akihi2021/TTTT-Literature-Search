@@ -51,7 +51,7 @@ update_parser.add_argument('user_name', type=str,
 update_parser.add_argument(
     'gender', type=str, required=False, default=None, help='gender')
 update_parser.add_argument(
-    'email', type=str, required=False, default=None, help='email')
+    'mail', type=str, required=False, default=None, help='email')
 update_parser.add_argument(
     'phone', type=str, required=False, default=None, help='phone')
 update_parser.add_argument(
@@ -210,22 +210,22 @@ class CheckInfo(BaseResource):
             msg=msg,
             data=dict(
                 success=success,
-                username=infouser[1] if success else None,
-                gender=infouser[3] if success else None,
-                email=infouser[4] if success else None,
-                phone=infouser[5] if success else None,
-                major=infouser[6] if success else None,
-                campus=infouser[7] if success else None,
-                org=infouser[8] if success else None,
-                is_associated=(True if portal[0]
+                username=infouser['user_name'] if success else None,
+                gender=infouser['gender'] if success else None,
+                email=infouser['mail'] if success else None,
+                phone=infouser['phone'] if success else None,
+                major=infouser['major'] if success else None,
+                campus=infouser['campus'] if success else None,
+                org=infouser['institution'] if success else None,
+                is_associated=(True if portal
                                else False) if success else None,
-                department=infouser[8] if success else None,
-                hobby=infouser[9] if success else None,
-                history=(eval(infouser[10])if infouser[10]
+                department=infouser['institution'] if success else None,
+                hobby=infouser['hobby'] if success else None,
+                history=(eval(infouser['history'])if infouser['history']
                          else []) if success else None,
-                follow=(eval(infouser[11])if infouser[11]
+                follow=(eval(infouser['follow'])if infouser['follow']
                         else []) if success else None,
-                favor=(eval(infouser[12]) if infouser[12]
+                favor=(eval(infouser['favor']) if infouser['favor']
                        else []) if success else None
             )
         )
@@ -311,15 +311,16 @@ class UpdateUserInfo(BaseResource):
     def post(self):
         args = update_parser.parse_args()
 
-        info = []
-        info.append(args['user_name'])
-        info.append(args['gender'])
-        info.append(args['email'])
-        info.append(args['phone'])
-        info.append(args['major'])
-        info.append(args['campus'])
-        info.append(args['institution'])
-        info.append(args['hobby'])
+        info = dict(
+            user_name=args['user_name'],
+            gender=args['gender'],
+            mail=args['mail'],
+            phone=args['phone'],
+            major=args['major'],
+            campus=args['campus'],
+            institution=args['institution'],
+            hobby=args['hobby']
+        )
 
         msg, success = user.update_info(args['user_id'], info)
 
