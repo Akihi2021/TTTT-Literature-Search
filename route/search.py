@@ -1,10 +1,40 @@
+import string
+
+from flask import request
+from flask_restx import fields
+
 from log import logger
 
 from context import swagger, openAlex
-from rest import request_handle, Response, BaseResource
+from rest import request_handle, Response, BaseResource, response_model
 
 search_ns = swagger.namespace('search', description='APIs for search authors, papers')
 swagger.add_namespace(search_ns)
+
+success_data_model = swagger.model("SuccessData", model={
+    "success": fields.Boolean(False)
+})
+
+
+search_papers_success_data_model = search_ns.inherit("SearchPapersSuccessData", success_data_model, {
+    "group_by": fields.String,
+    "meta": fields.String,
+    "results": fields.String('详情请见https://docs.openalex.org/about-the-data/work')
+})
+
+search_papers_success_response_model = search_ns.inherit("SearchPapersSuccessResponse", response_model, {
+    "data": fields.Nested(search_papers_success_data_model)
+})
+search_authors_success_data_model = search_ns.inherit("SearchAuthorsSuccessData", success_data_model, {
+    "group_by": fields.String,
+    "meta": fields.String,
+    "results": fields.String('详情请见https://docs.openalex.org/about-the-data/author')
+})
+
+search_authors_success_response_model = search_ns.inherit("SearchAuthorsSuccessResponse", response_model, {
+    "data": fields.Nested(search_papers_success_data_model)
+})
+
 
 ####################################################################################################
 # Search API with OpenAlex
@@ -20,6 +50,35 @@ swagger.add_namespace(search_ns)
 #       2. https://docs.openalex.org/api/get-lists-of-entities/search-entity-lists
 ####################################################################################################
 
+@search_ns.route('/papers')
+class PaperRecommend(BaseResource):
+    @search_ns.doc('Get papers searched')
+    @search_ns.param(name="keyword", description="Keywords to search for papers", type=str)
+    @search_ns.response(200, 'success', search_papers_success_response_model)
+    @request_handle
+    def get(self):
+        data = []
+        for work in openAlex.get_list_of_works(search=str(request.args["keyword"]), pages=[1]):
+            data.append(work)
 
-if __name__ == "__main__":
-    print(openAlex.get_random_work())
+        resp = Response(
+            data=data
+        )
+        return resp
+
+
+@search_ns.route('/authors')
+class PaperRecommend(BaseResource):
+    @search_ns.doc('Get authors searched')
+    @search_ns.param(name="keyword", description="Keywords to search for authors", type=str)
+    @search_ns.response(200, 'success', search_authors_success_response_model)
+    @request_handle
+    def get(self):
+        data = []
+        for author in openAlex.get_list_of_authors(search=str(request.args["keyword"]), pages=[1]):
+            data.append(author)
+
+        resp = Response(
+            data=data
+        )
+        return resp
