@@ -33,7 +33,7 @@ class Db_connection:
     def __enter__(self, ):
         self.db = pymysql.connect(host=self.host, user=self.username, password=self.password, database=self.database,
                                   port=int(self.port))
-        self.cursor = self.db.cursor()
+        self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 
         return [self.db, self.cursor]
 
