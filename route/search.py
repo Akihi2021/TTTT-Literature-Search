@@ -11,12 +11,7 @@ from rest import request_handle, Response, BaseResource, response_model
 search_ns = swagger.namespace('search', description='APIs for search authors, papers')
 swagger.add_namespace(search_ns)
 
-success_data_model = swagger.model("SuccessData", model={
-    "success": fields.Boolean(False)
-})
-
-
-search_papers_success_data_model = search_ns.inherit("SearchPapersSuccessData", success_data_model, {
+search_papers_success_data_model = swagger.model("SearchPapersSuccessData", model={
     "group_by": fields.String,
     "meta": fields.String,
     "results": fields.String('详情请见https://docs.openalex.org/about-the-data/work')
@@ -25,14 +20,14 @@ search_papers_success_data_model = search_ns.inherit("SearchPapersSuccessData", 
 search_papers_success_response_model = search_ns.inherit("SearchPapersSuccessResponse", response_model, {
     "data": fields.Nested(search_papers_success_data_model)
 })
-search_authors_success_data_model = search_ns.inherit("SearchAuthorsSuccessData", success_data_model, {
+search_authors_success_data_model = swagger.model("SearchAuthorsSuccessData", model={
     "group_by": fields.String,
     "meta": fields.String,
     "results": fields.String('详情请见https://docs.openalex.org/about-the-data/author')
 })
 
 search_authors_success_response_model = search_ns.inherit("SearchAuthorsSuccessResponse", response_model, {
-    "data": fields.Nested(search_papers_success_data_model)
+    "data": fields.Nested(search_authors_success_data_model)
 })
 
 
@@ -54,11 +49,14 @@ search_authors_success_response_model = search_ns.inherit("SearchAuthorsSuccessR
 class PaperRecommend(BaseResource):
     @search_ns.doc('Get papers searched')
     @search_ns.param(name="keyword", description="Keywords to search for papers", type=str)
+    @search_ns.param(name="page", description="Page number of search results", type=int, default=1)
+    @search_ns.param(name="per_page", description="Number of works displayed per page", type=int, default=25)
     @search_ns.response(200, 'success', search_papers_success_response_model)
     @request_handle
     def get(self):
         data = []
-        for work in openAlex.get_list_of_works(search=str(request.args["keyword"]), pages=[1]):
+        for work in openAlex.get_list_of_works(search=str(request.args["keyword"]), pages=[int(request.args["page"])],
+                                               per_page=int(request.args["per_page"])):
             data.append(work)
 
         resp = Response(
@@ -71,11 +69,51 @@ class PaperRecommend(BaseResource):
 class PaperRecommend(BaseResource):
     @search_ns.doc('Get authors searched')
     @search_ns.param(name="keyword", description="Keywords to search for authors", type=str)
+    @search_ns.param(name="page", description="Page number of search results", type=int, default=1)
+    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25)
     @search_ns.response(200, 'success', search_authors_success_response_model)
     @request_handle
     def get(self):
         data = []
-        for author in openAlex.get_list_of_authors(search=str(request.args["keyword"]), pages=[1]):
+        for author in openAlex.get_list_of_authors(search=str(request.args["keyword"]),
+                                                   pages=[int(request.args["page"])],
+                                                   per_page=int(request.args["per_page"])):
+            data.append(author)
+
+        resp = Response(
+            data=data
+        )
+        return resp
+
+
+@search_ns.route('/author')
+class PaperRecommend(BaseResource):
+    @search_ns.doc('Get author searched')
+    @search_ns.param(name="id", description="The OpenAlex ID for this author ", type=int)
+    @search_ns.response(200, 'success', search_authors_success_response_model)
+    @request_handle
+    def get(self):
+        data = []
+        for author in openAlex.get_list_of_authors(
+                filters={'openalex_id': 'https://openalex.org/A' + str(int(request.args['id']))}):
+            data.append(author)
+
+        resp = Response(
+            data=data
+        )
+        return resp
+
+
+@search_ns.route('/paper')
+class PaperRecommend(BaseResource):
+    @search_ns.doc('Get paper searched')
+    @search_ns.param(name="id", description="The OpenAlex ID for this paper ", type=int)
+    @search_ns.response(200, 'success', search_papers_success_response_model)
+    @request_handle
+    def get(self):
+        data = []
+        for author in openAlex.get_list_of_works(
+                filters={'openalex_id': 'https://openalex.org/W' + str(int(request.args['id']))}):
             data.append(author)
 
         resp = Response(
