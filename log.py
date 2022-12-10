@@ -4,7 +4,10 @@ import os
 from logging.handlers import TimedRotatingFileHandler
 
 ##################################################
-# logging config
+# DEMO Logger
+# Usage:
+#       1. logger.info("this is an info")
+#       2. logger.error("this is an error")
 ##################################################
 
 work_dir = '../logs'
@@ -28,6 +31,3 @@ stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
 
-# Demo
-# logger.info("asdfasdf")
-# logger.error("asdfsd")
