@@ -1,5 +1,5 @@
 server_host = ""
-server_port = "5001"
+server_port = ""
 server_url = '{}:{}'.format(server_host, server_port)
 
 db_host = "124.70.14.86"
