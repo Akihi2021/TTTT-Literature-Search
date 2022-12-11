@@ -49,7 +49,7 @@ update_parser = id_parser.copy()
 update_parser.add_argument('user_name', location=['json'],  type=str,
                            required=False, default=None, help='username')
 update_parser.add_argument(
-    'gender', type=str, required=False, location=['json'],  efault=None, help='gender')
+    'gender', type=str, required=False, location=['json'],  default=None, help='gender')
 update_parser.add_argument(
     'mail', type=str, required=False, location=['json'],  default=None, help='email')
 update_parser.add_argument(
