@@ -20,56 +20,56 @@ swagger.add_namespace(user_ns)
 # LINK: https://flask-restx.readthedocs.io/en/latest/parsing.html#parser-inheritance
 
 login_parser = swagger.parser()
-login_parser.add_argument('username', type=str, required=True, location=['json'], help='Userame')
-login_parser.add_argument('password', type=str, required=True, location=['json'], help='Password')
+login_parser.add_argument('username', type=str, required=True, location="json", help='Userame')
+login_parser.add_argument('password', type=str, required=True, location="json", help='Password')
 
 forget_parser = login_parser.copy()
 forget_parser.add_argument('repassword', type=str,
-                           required=True, location=['json'],  help='rePassword')
+                           required=True, location="json",  help='rePassword')
 
 register_parser = forget_parser.copy()
-register_parser.add_argument('email', type=str, required=True, location=['json'],  help='Email')
+register_parser.add_argument('email', type=str, required=True, location="json",  help='Email')
 
 id_parser = swagger.parser()
-id_parser.add_argument('user_id', type=int, required=True,location=['json'],   help='UserId')
+id_parser.add_argument('user_id', type=int, required=True,location="json",   help='UserId')
 
 history_parser = id_parser.copy()
 history_parser.add_argument(
-    'paper_id', type=str, required=True, location=['json'],  help='latest viewed paper')
+    'paper_id', type=str, required=True, location="json",  help='latest viewed paper')
 
 favor_parser = id_parser.copy()
 favor_parser.add_argument('paper_id', type=str,
-                          required=True, location=['json'],  help='latest favored paper')
+                          required=True, location="json",  help='latest favored paper')
 
 follow_parser = id_parser.copy()
 follow_parser.add_argument('expert_id', type=str,
-                           required=True, location=['json'],  help='latest followed expert')
+                           required=True, location="json",  help='latest followed expert')
 
 update_parser = id_parser.copy()
-update_parser.add_argument('user_name', location=['json'],  type=str,
+update_parser.add_argument('user_name', location="json",  type=str,
                            required=False, default=None, help='username')
 update_parser.add_argument(
-    'gender', type=str, required=False, location=['json'],  default=None, help='gender')
+    'gender', type=str, required=False, location="json",  default=None, help='gender')
 update_parser.add_argument(
-    'mail', type=str, required=False, location=['json'],  default=None, help='email')
+    'mail', type=str, required=False, location="json",  default=None, help='email')
 update_parser.add_argument(
-    'phone', type=str, required=False, location=['json'],  default=None, help='phone')
+    'phone', type=str, required=False, location="json",  default=None, help='phone')
 update_parser.add_argument(
-    'major', type=str, required=False, location=['json'],  default=None, help='major')
+    'major', type=str, required=False, location="json",  default=None, help='major')
 update_parser.add_argument(
-    'campus', type=str, required=False, location=['json'],  default=None, help='campus')
+    'campus', type=str, required=False, location="json",  default=None, help='campus')
 update_parser.add_argument('institution', type=str,
-                           required=False, location=['json'],  default=None, help='institution')
+                           required=False, location="json",  default=None, help='institution')
 update_parser.add_argument(
-    'hobby', type=str, required=False, location=['json'],  default=None, help='hobby')
+    'hobby', type=str, required=False, location="json",  default=None, help='hobby')
 update_parser.add_argument(
-    'language', type=str, required=False, location=['json'],  default=None, help='language')
-update_parser.add_argument('introduction', location=['json'],  type=str,
+    'language', type=str, required=False, location="json",  default=None, help='language')
+update_parser.add_argument('introduction', location="json",  type=str,
                            required=False, default=None, help='introduction')
 
 associate_parser = id_parser.copy()
 associate_parser.add_argument(
-    'expert_id', type=str, location=['json'],  required=True, help='ExpertId')
+    'expert_id', type=str, location="json",  required=True, help='ExpertId')
 ####################################################################################################
 
 ####################################################################################################
