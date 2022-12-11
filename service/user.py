@@ -16,8 +16,7 @@ class LoginUser(UserMixin):
         self.password = user['password']
         self.email = user['mail']
         self.id = user['id']
-        self.is_associated = True if get_associated_portal(
-            user['id']) else False
+        self.is_associated = True if user['openalex_id'] else False
 
     def verify_password(self, password):
         return password == self.password
@@ -109,14 +108,6 @@ def get_user_by_userid(userid):
     return user[0] if num else None
 
 
-def get_associated_portal(id):
-    with sql.Db_connection() as [db, cursor]:
-        num, portal = sql.select(
-            cursor, '*', 'portal', 'where user_id = %d' % id)
-        db.commit()
-    return portal[0] if num else None
-
-
 def insert_new_user(username, password, repassword, email):
     with sql.Db_connection() as [db, cursor]:
         num, user = sql.select(cursor, '*', 'user',
@@ -147,8 +138,7 @@ def get_user_info(user_id):
 
     if (user):
         success = True
-        portal = get_associated_portal(user['id'])
-        return msg, success, user, portal
+        return msg, success, user
     else:
         msg = 'The user does not exist'
         return msg, success, None, None
@@ -255,9 +245,29 @@ def update_info(user_id, info):
             campus = info['campus'] if info['campus'] else user['campus']
             institution = info['institution'] if info['institution'] else user['institution']
             hobby = info['hobby'] if info['hobby'] else user['hobby']
+            language = info['language'] if info['language'] else user['language']
+            introduction = info['introduction'] if info['introduction'] else user['introduction']
             sql.update(cursor, ['user_name', 'gender', 'mail', 'phone', 'major',
-                       'campus', 'institution', 'hobby'], '`user`', [username,
-                       gender, mail, phone, major, campus, institution, hobby], 'where id = %d' % user_id)
+                       'campus', 'institution', 'hobby', 'language', 'introduction'], '`user`', [username,
+                       gender, mail, phone, major, campus, institution, hobby, language, introduction], 'where id = %d' % user_id)
+            success = True
+        else:
+            msg = 'User not found'
+        db.commit()
+
+    return msg, success
+
+
+def associate_user(user_id, expert_id):
+    with sql.Db_connection() as [db, cursor]:
+        num, user = sql.select(cursor, '*', '`user`',
+                               'where id = %d' % user_id)
+        success = False
+        msg = "success"
+
+        if num:
+            sql.update(cursor, ['openalex_id'], '`user`', [
+                       expert_id], 'where id = %d' % user_id)
             success = True
         else:
             msg = 'User not found'
