@@ -11,9 +11,9 @@ paper_ns = swagger.namespace('paper', description='APIs for Paper')
 swagger.add_namespace(paper_ns)
 
 comment_parser = swagger.parser()
-comment_parser.add_argument('user_id', type=int, required=True, help='ID of the user')
-comment_parser.add_argument('paper_id', type=str, required=True, help='OpenAlex ID of the paper')
-comment_parser.add_argument('content', type=str, required=True, help='Content of the comment')
+comment_parser.add_argument('user_id', type=int, required=True, location="json", help='ID of the user')
+comment_parser.add_argument('paper_id', type=str, required=True, location="json", help='OpenAlex ID of the paper')
+comment_parser.add_argument('content', type=str, required=True, location="json", help='Content of the comment')
 
 comment_model = swagger.model("CommentModel", model={
     "user_id": fields.String,
@@ -35,7 +35,7 @@ get_paper_response_model = paper_ns.inherit("GetPaperResponse", response_model, 
 
 
 @paper_ns.route('/')
-class PaperRecommend(BaseResource):
+class GetPaper(BaseResource):
     @paper_ns.doc('Get paper')
     @paper_ns.param(name="id", description="The OpenAlex ID for this paper ", type=int)
     @paper_ns.response(200, 'success', get_paper_response_model)
