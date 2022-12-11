@@ -22,16 +22,17 @@ comment_model = swagger.model("CommentModel", model={
     "time": fields.DateTime()
 })
 
-paper_data_model = swagger.model("SearchPapersSuccessData", model={
+paper_data_model = swagger.model("GetPaperData", model={
     "group_by": fields.String,
     "meta": fields.String,
     "results": fields.String('详情请见https://docs.openalex.org/about-the-data/work'),
     "comments": fields.List(fields.Nested(comment_model))
 })
 
-get_paper_response_model = paper_ns.inherit("SearchPapersSuccessResponse", response_model, {
+get_paper_response_model = paper_ns.inherit("GetPaperResponse", response_model, {
     "data": fields.Nested(paper_data_model)
 })
+
 
 @paper_ns.route('/')
 class PaperRecommend(BaseResource):

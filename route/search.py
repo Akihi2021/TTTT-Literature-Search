@@ -14,7 +14,7 @@ swagger.add_namespace(search_ns)
 search_papers_success_data_model = swagger.model("SearchPapersSuccessData", model={
     "group_by": fields.String,
     "meta": fields.String,
-    "results": fields.String('详情请见https://docs.openalex.org/about-the-data/work')
+    "results": fields.List(fields.String('详情请见https://docs.openalex.org/about-the-data/work'))
 })
 
 search_papers_success_response_model = search_ns.inherit("SearchPapersSuccessResponse", response_model, {
@@ -23,7 +23,7 @@ search_papers_success_response_model = search_ns.inherit("SearchPapersSuccessRes
 search_authors_success_data_model = swagger.model("SearchAuthorsSuccessData", model={
     "group_by": fields.String,
     "meta": fields.String,
-    "results": fields.String('详情请见https://docs.openalex.org/about-the-data/author')
+    "results": fields.List(fields.String('详情请见https://docs.openalex.org/about-the-data/author'))
 })
 
 search_authors_success_response_model = search_ns.inherit("SearchAuthorsSuccessResponse", response_model, {
