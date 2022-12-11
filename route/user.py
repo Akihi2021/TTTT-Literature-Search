@@ -66,6 +66,10 @@ update_parser.add_argument(
     'language', type=str, required=False, default=None, help='language')
 update_parser.add_argument('introduction', type=str,
                            required=False, default=None, help='introduction')
+
+associate_parser = id_parser.copy()
+associate_parser.add_argument(
+    'expert_id', type=str, required=True, help='ExpertId')
 ####################################################################################################
 
 ####################################################################################################
@@ -206,7 +210,7 @@ class CheckInfo(BaseResource):
     def post(self):
         args = id_parser.parse_args()
 
-        msg, success, infouser, portal = user.get_user_info(
+        msg, success, infouser = user.get_user_info(
             args['user_id'])
 
         code = 200 if success else 0
@@ -223,7 +227,7 @@ class CheckInfo(BaseResource):
                 major=infouser['major'] if success else None,
                 campus=infouser['campus'] if success else None,
                 org=infouser['institution'] if success else None,
-                is_associated=(True if portal
+                is_associated=(True if infouser['openalex_id']
                                else False) if success else None,
                 department=infouser['institution'] if success else None,
                 hobby=infouser['hobby'] if success else None,
@@ -343,6 +347,30 @@ class UpdateUserInfo(BaseResource):
                 success=success
             )
         )
+        return resp
+
+
+@user_ns.route('/associate_user')
+class AssociateUser(BaseResource):
+    @user_ns.doc('associate user with expert')
+    @user_ns.expect(associate_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = associate_parser.parse_args()
+
+        msg, success = user.associate_user(args['user_id'], args['expert_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
+            )
+        )
+
         return resp
 
 
