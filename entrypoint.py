@@ -9,7 +9,7 @@ from context import app
 from rest import AppJSONEncoder
 
 # NOTE: Add your swagger namespace here
-from route import hello, search, user, recommend, search
+from route import hello, search, user, recommend, search, paper
 
 if __name__ == "__main__":
     # run Flask App
