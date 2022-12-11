@@ -31,7 +31,7 @@ register_parser = forget_parser.copy()
 register_parser.add_argument('email', type=str, required=True, location="json",  help='Email')
 
 id_parser = swagger.parser()
-id_parser.add_argument('user_id', type=int, required=True,location="json",   help='UserId')
+id_parser.add_argument('user_id', type=int, required=True, location="json",   help='UserId')
 
 history_parser = id_parser.copy()
 history_parser.add_argument(
@@ -201,7 +201,7 @@ class PersonalRegister(BaseResource):
         return resp
 
 
-@user_ns.route('/check_my_info ')
+@user_ns.route('/check_my_info')
 class CheckInfo(BaseResource):
     @user_ns.doc('check user info')
     @user_ns.expect(id_parser)
