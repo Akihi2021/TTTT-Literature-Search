@@ -13,7 +13,7 @@ swagger.add_namespace(paper_ns)
 comment_parser = swagger.parser()
 comment_parser.add_argument('user_id', type=int, required=True, help='ID of the user')
 comment_parser.add_argument('paper_id', type=str, required=True, help='OpenAlex ID of the paper')
-comment_parser.add_argument('content', type=str, required=False, help='Content of the comment')
+comment_parser.add_argument('content', type=str, required=True, help='Content of the comment')
 
 
 @paper_ns.route('/comment')
