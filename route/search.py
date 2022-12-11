@@ -48,16 +48,17 @@ search_authors_success_response_model = search_ns.inherit("SearchAuthorsSuccessR
 @search_ns.route('/papers')
 class PaperRecommend(BaseResource):
     @search_ns.doc('Get papers searched')
-    @search_ns.param(name="keyword", description="Keywords to search for papers", type=str)
+    @search_ns.param(name="keyword", description="Keywords to search for papers", type=str, location="json")
     @search_ns.param(name="content", description="Search content(title|time|author|abstract|"")", type=str,
-                     default="null")
+                     default="null", location="json")
     @search_ns.param(name="type", description="filter type(dissertation,book,journal 任选,用逗号隔开)", type=str,
-                     default="null")
-    @search_ns.param(name="institution", description="institution name", type=str, default="null")
-    @search_ns.param(name="time", description="publication year", type=str, default="null")
-    @search_ns.param(name="author", description="author name", type=str, default="null")
-    @search_ns.param(name="page", description="Page number of search results", type=int, default=1)
-    @search_ns.param(name="per_page", description="Number of works displayed per page", type=int, default=25)
+                     default="null", location="json")
+    @search_ns.param(name="institution", description="institution name", type=str, default="null", location="json")
+    @search_ns.param(name="time", description="publication year", type=str, default="null", location="json")
+    @search_ns.param(name="author", description="author name", type=str, default="null", location="json")
+    @search_ns.param(name="page", description="Page number of search results", type=int, default=1, location="json")
+    @search_ns.param(name="per_page", description="Number of works displayed per page", type=int, default=25,
+                     location="json")
     @search_ns.response(200, 'success', search_papers_success_response_model)
     @request_handle
     def get(self):
@@ -155,9 +156,10 @@ class PaperRecommend(BaseResource):
 @search_ns.route('/authors')
 class PaperRecommend(BaseResource):
     @search_ns.doc('Get authors searched')
-    @search_ns.param(name="keyword", description="Keywords to search for authors", type=str)
-    @search_ns.param(name="page", description="Page number of search results", type=int, default=1)
-    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25)
+    @search_ns.param(name="keyword", description="Keywords to search for authors", type=str, location="json")
+    @search_ns.param(name="page", description="Page number of search results", type=int, default=1, location="json")
+    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25,
+                     location="json")
     @search_ns.response(200, 'success', search_authors_success_response_model)
     @request_handle
     def get(self):
@@ -176,21 +178,22 @@ class PaperRecommend(BaseResource):
 @search_ns.route('/AdvancedSearch')
 class PaperRecommend(BaseResource):
     @search_ns.doc('Get papers searched')
-    @search_ns.param(name="title", description="search title", type=str, default='null')
-    @search_ns.param(name="abstract", description="Search abstract", type=str, default="null")
-    @search_ns.param(name="author", description="author name", type=str, default="null")
+    @search_ns.param(name="title", description="search title", type=str, default='null', location="json")
+    @search_ns.param(name="abstract", description="Search abstract", type=str, default="null", location="json")
+    @search_ns.param(name="author", description="author name", type=str, default="null", location="json")
     @search_ns.param(name="type", description="filter type(dissertation,book,journal 任选,用逗号隔开)", type=str,
-                     default="null")
+                     default="null", location="json")
     @search_ns.param(name="and1", description="title的and|not", type=str,
-                     default="and")
+                     default="and", location="json")
     @search_ns.param(name="and2", description="abstract的and|not", type=str,
-                     default="and")
+                     default="and", location="json")
     @search_ns.param(name="and3", description="author的and|not", type=str,
-                     default="and")
-    @search_ns.param(name="from", description="论文发表开始日期", type=str, default="null")
-    @search_ns.param(name="to", description="论文发表结束日期", type=str, default="null")
-    @search_ns.param(name="page", description="Page number of search results", type=int, default=1)
-    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25)
+                     default="and", location="json")
+    @search_ns.param(name="from", description="论文发表开始日期", type=str, default="null", location="json")
+    @search_ns.param(name="to", description="论文发表结束日期", type=str, default="null", location="json")
+    @search_ns.param(name="page", description="Page number of search results", type=int, default=1, location="json")
+    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25,
+                     location="json")
     @search_ns.response(200, 'success', search_papers_success_response_model)
     @request_handle
     def get(self):
