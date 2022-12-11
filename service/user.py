@@ -255,9 +255,11 @@ def update_info(user_id, info):
             campus = info['campus'] if info['campus'] else user['campus']
             institution = info['institution'] if info['institution'] else user['institution']
             hobby = info['hobby'] if info['hobby'] else user['hobby']
+            language = info['language'] if info['language'] else user['language']
+            introduction = info['introduction'] if info['introduction'] else user['introduction']
             sql.update(cursor, ['user_name', 'gender', 'mail', 'phone', 'major',
-                       'campus', 'institution', 'hobby'], '`user`', [username,
-                       gender, mail, phone, major, campus, institution, hobby], 'where id = %d' % user_id)
+                       'campus', 'institution', 'hobby', 'language', 'introduction'], '`user`', [username,
+                       gender, mail, phone, major, campus, institution, hobby, language, introduction], 'where id = %d' % user_id)
             success = True
         else:
             msg = 'User not found'

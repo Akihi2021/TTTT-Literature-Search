@@ -62,6 +62,10 @@ update_parser.add_argument('institution', type=str,
                            required=False, default=None, help='institution')
 update_parser.add_argument(
     'hobby', type=str, required=False, default=None, help='hobby')
+update_parser.add_argument(
+    'language', type=str, required=False, default=None, help='language')
+update_parser.add_argument('introduction', type=str,
+                           required=False, default=None, help='introduction')
 ####################################################################################################
 
 ####################################################################################################
@@ -100,7 +104,9 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     "department": fields.String,
     "history": fields.List(fields.String),
     "follow": fields.List(fields.String),
-    "favor": fields.List(fields.String)
+    "favor": fields.List(fields.String),
+    "language": fields.String,
+    "introduction": fields.String
 })
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
@@ -226,7 +232,9 @@ class CheckInfo(BaseResource):
                 follow=(eval(infouser['follow'])if infouser['follow']
                         else []) if success else None,
                 favor=(eval(infouser['favor']) if infouser['favor']
-                       else []) if success else None
+                       else []) if success else None,
+                language=infouser['language'] if success else None,
+                introduction=infouser['introduction'] if success else None
             )
         )
         return resp
@@ -319,7 +327,9 @@ class UpdateUserInfo(BaseResource):
             major=args['major'],
             campus=args['campus'],
             institution=args['institution'],
-            hobby=args['hobby']
+            hobby=args['hobby'],
+            language=args['language'],
+            introduction=args['introduction']
         )
 
         msg, success = user.update_info(args['user_id'], info)
