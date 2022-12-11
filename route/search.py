@@ -85,22 +85,3 @@ class PaperRecommend(BaseResource):
         )
         return resp
 
-
-@search_ns.route('/author')
-class PaperRecommend(BaseResource):
-    @search_ns.doc('Get author searched')
-    @search_ns.param(name="id", description="The OpenAlex ID for this author ", type=int)
-    @search_ns.response(200, 'success', search_authors_success_response_model)
-    @request_handle
-    def get(self):
-        data = []
-        for author in openAlex.get_list_of_authors(
-                filters={'openalex_id': 'https://openalex.org/A' + str(int(request.args['id']))}):
-            data.append(author)
-
-        resp = Response(
-            data=data
-        )
-        return resp
-
-
