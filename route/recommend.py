@@ -47,7 +47,6 @@ class AuthorRecommend(BaseResource):
 
         return resp
 
-
 @recommend_ns.route('/concepts')
 class AuthorRecommend(BaseResource):
     @recommend_ns.doc('Recommend concepts')
