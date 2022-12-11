@@ -1,6 +1,6 @@
-docker build -t vinok/tttt .
+docker build -t vinokkk/tttt:latest .
 
-docker push vinok/tttt:latest
+docker push vinokkk/tttt:latest
 
 chmod 777 ./login_and_deploy.sh
 
