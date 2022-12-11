@@ -8,7 +8,7 @@ from log import logger
 from context import swagger, openAlex
 from rest import request_handle, Response, BaseResource, response_model
 
-author_ns = swagger.namespace('author', description='Author related API')
+author_ns = swagger.namespace('author', description='API for Author')
 swagger.add_namespace(author_ns)
 
 

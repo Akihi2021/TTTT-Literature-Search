@@ -7,7 +7,7 @@ from flask import request
 from route.user import success_response_model
 from service.paper import do_comment, get_comment
 
-paper_ns = swagger.namespace('paper', description='APIs for paper authors, papers')
+paper_ns = swagger.namespace('paper', description='APIs for Paper')
 swagger.add_namespace(paper_ns)
 
 comment_parser = swagger.parser()

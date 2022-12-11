@@ -8,7 +8,7 @@ from log import logger
 from context import swagger, openAlex
 from rest import request_handle, Response, BaseResource, response_model
 
-search_ns = swagger.namespace('search', description='APIs for search authors, papers')
+search_ns = swagger.namespace('search', description='APIs for Search')
 swagger.add_namespace(search_ns)
 
 search_papers_success_data_model = swagger.model("SearchPapersSuccessData", model={

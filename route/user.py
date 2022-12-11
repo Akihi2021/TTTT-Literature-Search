@@ -9,7 +9,7 @@ from helper import sql
 from model.user import User
 from service import user
 
-user_ns = swagger.namespace('user', description='APIs for users')
+user_ns = swagger.namespace('user', description='APIs for User')
 swagger.add_namespace(user_ns)
 
 

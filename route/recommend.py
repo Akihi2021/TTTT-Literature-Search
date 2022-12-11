@@ -6,7 +6,7 @@ from flask import request
 
 from route.search import search_authors_success_response_model, search_papers_success_response_model
 
-recommend_ns = swagger.namespace('recommend', description='APIs for Recommend authors, papers')
+recommend_ns = swagger.namespace('recommend', description='APIs for Recommend Authors, Papers, Concepts')
 swagger.add_namespace(recommend_ns)
 
 
