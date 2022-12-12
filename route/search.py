@@ -216,22 +216,25 @@ class PaperRecommend(BaseResource):
                     author_ids = author_ids + "|"
             author_ids = author_ids.strip("|")
         types = ''
+        filters = {}
         if type != "null":
             types1 = type.split(",")
             for i in range(0, len(types1) - 1):
                 types = types + types1[i]
-                if i != len(types1) - 2:
-                    types = types + "|"
-        filters = {}
+                types = types + "|"
+            types = types.strip("|")
+            filters = dict(filters, **{
+                'type': types
+            })
         if title != 'null':
             if and1 == "not":
-                filters = {
+                filters = dict(filters, **{
                     'title': "!" + title
-                }
+                })
             else:
-                filters = {
+                filters = dict(filters, **{
                     'title': title
-                }
+                })
         if abstract != 'null':
             if and2 == "not":
                 filters = dict(filters, **{
@@ -250,9 +253,15 @@ class PaperRecommend(BaseResource):
                 filters = dict(filters, **{
                     'author.id': author_ids
                 })
-        for author in openAlex.get_list_of_works(filters=dict(filters, **{
-            'type': types, 'from_publication_date': from_date, 'to_publication_date': to_date
-        }),
+        if from_date != 'null':
+            filters = dict(filters, **{
+                'from_publication_date': from_date
+            })
+        if to_date != 'null':
+            filters = dict(filters, **{
+                'to_publication_date': to_date
+            })
+        for author in openAlex.get_list_of_works(filters=filters,
                                                  pages=[int(request.args["page"])],
                                                  per_page=int(request.args["per_page"])):
             data.append(author)
