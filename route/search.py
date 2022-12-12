@@ -50,7 +50,7 @@ class PaperRecommend(BaseResource):
     @search_ns.doc('Get papers searched')
     @search_ns.param(name="keyword", description="Keywords to search for papers", type=str, location="json")
     @search_ns.param(name="content", description="Search content(title|time|author|abstract|"")", type=str,
-                     default="null", location="json")
+                     default="null", location="json", required=True)
     @search_ns.param(name="type", description="filter type(dissertation,book,journal 任选,用逗号隔开)", type=str,
                      default="null", location="json")
     @search_ns.param(name="institution", description="institution name", type=str, default="null", location="json")
@@ -64,17 +64,20 @@ class PaperRecommend(BaseResource):
     def get(self):
         data = []
         filters = {}
-        content = str(request.args["content"])
-        type = str(request.args["type"])
-        institution = str(request.args["institution"])
-        time = str(request.args["time"])
+        keyword = request.args["keyword"] if ('keyword' in request.args) else "null"
+        if keyword == "null":
+            return data
+        content = request.args["content"] if ('content' in request.args) else "null"
+        type = request.args["type"] if ('type' in request.args) else "null"
+        institution = request.args["institution"] if ('institution' in request.args) else "null"
+        time = request.args["time"] if ('time' in request.args) else "null"
         if time == 'null':
             time = ""
         else:
             filters = {
                 'publication_year': time
             }
-        author = str(request.args["author"])
+        author = request.args["author"] if ('author' in request.args) else "null"
         types = ''
         if type != "null":
             types1 = type.split(",")
@@ -198,12 +201,12 @@ class PaperRecommend(BaseResource):
     @request_handle
     def get(self):
         data = []
-        type = str(request.args["type"])
-        title = str(request.args["title"])
-        author = str(request.args["author"])
-        abstract = str(request.args["abstract"])
-        from_date = str(request.args["from"])
-        to_date = str(request.args["to"])
+        type = request.args["type"] if ('type' in request.args) else "null"
+        title = request.args["title"] if ('title' in request.args) else "null"
+        author = request.args["author"] if ('author' in request.args) else "null"
+        abstract = request.args["abstract"] if ('abstract' in request.args) else "null"
+        from_date = request.args["from"] if ('from' in request.args) else "null"
+        to_date = request.args["to"] if ('to' in request.args) else "null"
         and1 = str(request.args["and1"])
         and2 = str(request.args["and2"])
         and3 = str(request.args["and3"])
