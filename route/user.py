@@ -20,18 +20,22 @@ swagger.add_namespace(user_ns)
 # LINK: https://flask-restx.readthedocs.io/en/latest/parsing.html#parser-inheritance
 
 login_parser = swagger.parser()
-login_parser.add_argument('username', type=str, required=True, location="json", help='Userame')
-login_parser.add_argument('password', type=str, required=True, location="json", help='Password')
+login_parser.add_argument('username', type=str,
+                          required=True, location="json", help='Userame')
+login_parser.add_argument('password', type=str,
+                          required=True, location="json", help='Password')
 
 forget_parser = login_parser.copy()
 forget_parser.add_argument('repassword', type=str,
                            required=True, location="json",  help='rePassword')
 
 register_parser = forget_parser.copy()
-register_parser.add_argument('email', type=str, required=True, location="json",  help='Email')
+register_parser.add_argument(
+    'email', type=str, required=True, location="json",  help='Email')
 
 id_parser = swagger.parser()
-id_parser.add_argument('user_id', type=int, required=True, location="json",   help='UserId')
+id_parser.add_argument('user_id', type=int, required=True,
+                       location="json",   help='UserId')
 
 history_parser = id_parser.copy()
 history_parser.add_argument(
@@ -66,6 +70,10 @@ update_parser.add_argument(
     'language', type=str, required=False, location="json",  default=None, help='language')
 update_parser.add_argument('introduction', location="json",  type=str,
                            required=False, default=None, help='introduction')
+update_parser.add_argument('position', location="json",
+                           type=str, required=False, default=None, help='position')
+update_parser.add_argument('org_bio', location="json",
+                           type=str, required=False, default=None, help='org bio')
 
 associate_parser = id_parser.copy()
 associate_parser.add_argument(
@@ -110,7 +118,9 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     "follow": fields.List(fields.String),
     "favor": fields.List(fields.String),
     "language": fields.String,
-    "introduction": fields.String
+    "introduction": fields.String,
+    'position': fields.String,
+    'org_bio': fields.String
 })
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
@@ -238,7 +248,9 @@ class CheckInfo(BaseResource):
                 favor=(eval(infouser['favor']) if infouser['favor']
                        else []) if success else None,
                 language=infouser['language'] if success else None,
-                introduction=infouser['introduction'] if success else None
+                introduction=infouser['introduction'] if success else None,
+                position=infouser['position'] if success else None,
+                org_bio=infouser['org_bio'] if success else None
             )
         )
         return resp
@@ -333,7 +345,9 @@ class UpdateUserInfo(BaseResource):
             institution=args['institution'],
             hobby=args['hobby'],
             language=args['language'],
-            introduction=args['introduction']
+            introduction=args['introduction'],
+            position=args['position'],
+            org_bio=args['org_bio']
         )
 
         msg, success = user.update_info(args['user_id'], info)
