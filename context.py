@@ -14,7 +14,7 @@ app_blueprint = Blueprint('api', __name__, url_prefix='/v1')
 swagger = Api(app_blueprint, version='1.0', doc='/swagger',
               title='TTTT Literature Search Backend API')
 app.register_blueprint(app_blueprint)
-CORS(app, resources=r'/*')  # 接受跨域
+CORS(app)  # 接受跨域
 
 
 app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True
