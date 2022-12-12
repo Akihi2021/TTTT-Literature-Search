@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag vinokkk/tttt:latest && docker push vinokkk/tttt:latest
+      run: docker build . --file Dockerfile --tag vinokkk/tttt:latest && docker login -u vinokkk -p Jin196632. && docker push vinokkk/tttt:latest
