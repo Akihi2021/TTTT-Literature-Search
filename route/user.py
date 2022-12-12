@@ -74,6 +74,8 @@ update_parser.add_argument('position', location="json",
                            type=str, required=False, default=None, help='position')
 update_parser.add_argument('org_bio', location="json",
                            type=str, required=False, default=None, help='org bio')
+update_parser.add_argument('achievement', location="json",
+                           type=str, required=False, default=None, help='achievement')
 
 associate_parser = id_parser.copy()
 associate_parser.add_argument(
@@ -120,7 +122,8 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     "language": fields.String,
     "introduction": fields.String,
     'position': fields.String,
-    'org_bio': fields.String
+    'org_bio': fields.String,
+    'achievement': fields.String
 })
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
@@ -250,7 +253,8 @@ class CheckInfo(BaseResource):
                 language=infouser['language'] if success else None,
                 introduction=infouser['introduction'] if success else None,
                 position=infouser['position'] if success else None,
-                org_bio=infouser['org_bio'] if success else None
+                org_bio=infouser['org_bio'] if success else None,
+                achievement=infouser['achievement'] if success else None
             )
         )
         return resp
@@ -347,7 +351,8 @@ class UpdateUserInfo(BaseResource):
             language=args['language'],
             introduction=args['introduction'],
             position=args['position'],
-            org_bio=args['org_bio']
+            org_bio=args['org_bio'],
+            achievement=args['achievement']
         )
 
         msg, success = user.update_info(args['user_id'], info)
