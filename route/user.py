@@ -125,7 +125,8 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     'position': fields.String,
     'org_bio': fields.String,
     'achievement': fields.String,
-    'direction': fields.String
+    'direction': fields.String,
+    'openalex_id': fields.String
 })
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
@@ -256,7 +257,8 @@ class CheckInfo(BaseResource):
                 position=infouser['position'] if success else None,
                 org_bio=infouser['org_bio'] if success else None,
                 achievement=infouser['achievement'] if success else None,
-                direction=infouser['direction'] if success else None
+                direction=infouser['direction'] if success else None,
+                openalex_id=infouser['openalex_id'] if success else None
             )
         )
         return resp
