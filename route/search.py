@@ -261,10 +261,33 @@ class PaperRecommend(BaseResource):
             filters = dict(filters, **{
                 'to_publication_date': to_date
             })
-        for author in openAlex.get_list_of_works(filters=filters,
-                                                 pages=[int(request.args["page"])],
-                                                 per_page=int(request.args["per_page"])):
-            data.append(author)
+        for work in openAlex.get_list_of_works(filters=filters,
+                                               pages=[int(request.args["page"])],
+                                               per_page=int(request.args["per_page"])):
+            data.append(work)
+
+        resp = Response(
+            data=data
+        )
+        return resp
+
+
+@search_ns.route('/AuthorId')
+class GetPaper(BaseResource):
+    @search_ns.doc('Get paper by author id')
+    @search_ns.param(name="id", description="The OpenAlex ID for this author ", type=int, location="json")
+    @search_ns.param(name="page", description="Page number of search results", type=int, default=1, location="json")
+    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25,
+                     location="json")
+    @search_ns.response(200, 'success', search_papers_success_response_model)
+    @request_handle
+    def get(self):
+        data = []
+        id = str(int(request.args['id']))
+        for work in openAlex.get_list_of_works(filters={'author.id': 'https://openalex.org/A' + id},
+                                               pages=[int(request.args["page"])],
+                                               per_page=int(request.args["per_page"])):
+            data.append(work)
 
         resp = Response(
             data=data
