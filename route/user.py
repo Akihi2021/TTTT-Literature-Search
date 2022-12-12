@@ -61,7 +61,7 @@ update_parser.add_argument(
 update_parser.add_argument(
     'major', type=str, required=False, location="json",  default=None, help='major')
 update_parser.add_argument(
-    'campus', type=str, required=False, location="json",  default=None, help='campus')
+    'department', type=str, required=False, location="json",  default=None, help='department')
 update_parser.add_argument('institution', type=str,
                            required=False, location="json",  default=None, help='institution')
 update_parser.add_argument(
@@ -76,6 +76,8 @@ update_parser.add_argument('org_bio', location="json",
                            type=str, required=False, default=None, help='org bio')
 update_parser.add_argument('achievement', location="json",
                            type=str, required=False, default=None, help='achievement')
+update_parser.add_argument('direction', location="json",
+                           type=str, required=False, default=None, help='direction')
 
 associate_parser = id_parser.copy()
 associate_parser.add_argument(
@@ -112,8 +114,7 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     "email": fields.String,
     "phone": fields.String,
     "major": fields.String,
-    "campus": fields.String,
-    "org": fields.String,
+    "institution": fields.String,
     "is_associated": fields.Boolean,
     "department": fields.String,
     "history": fields.List(fields.String),
@@ -123,7 +124,8 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
     "introduction": fields.String,
     'position': fields.String,
     'org_bio': fields.String,
-    'achievement': fields.String
+    'achievement': fields.String,
+    'direction': fields.String
 })
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
@@ -238,11 +240,10 @@ class CheckInfo(BaseResource):
                 email=infouser['mail'] if success else None,
                 phone=infouser['phone'] if success else None,
                 major=infouser['major'] if success else None,
-                campus=infouser['campus'] if success else None,
-                org=infouser['institution'] if success else None,
+                institution=infouser['institution'] if success else None,
                 is_associated=(True if infouser['openalex_id']
                                else False) if success else None,
-                department=infouser['institution'] if success else None,
+                department=infouser['department'] if success else None,
                 hobby=infouser['hobby'] if success else None,
                 history=(eval(infouser['history'])if infouser['history']
                          else []) if success else None,
@@ -254,7 +255,8 @@ class CheckInfo(BaseResource):
                 introduction=infouser['introduction'] if success else None,
                 position=infouser['position'] if success else None,
                 org_bio=infouser['org_bio'] if success else None,
-                achievement=infouser['achievement'] if success else None
+                achievement=infouser['achievement'] if success else None,
+                direction=infouser['direction'] if success else None
             )
         )
         return resp
@@ -345,14 +347,15 @@ class UpdateUserInfo(BaseResource):
             mail=args['mail'],
             phone=args['phone'],
             major=args['major'],
-            campus=args['campus'],
+            department=args['department'],
             institution=args['institution'],
             hobby=args['hobby'],
             language=args['language'],
             introduction=args['introduction'],
             position=args['position'],
             org_bio=args['org_bio'],
-            achievement=args['achievement']
+            achievement=args['achievement'],
+            direction=args['direction']
         )
 
         msg, success = user.update_info(args['user_id'], info)

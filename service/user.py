@@ -242,17 +242,18 @@ def update_info(user_id, info):
             mail = info['mail'] if info['mail'] else user['mail']
             phone = info['phone'] if info['phone'] else user['phone']
             major = info['major'] if info['major'] else user['major']
-            campus = info['campus'] if info['campus'] else user['campus']
+            department = info['department'] if info['department'] else user['department']
             institution = info['institution'] if info['institution'] else user['institution']
             hobby = info['hobby'] if info['hobby'] else user['hobby']
             language = info['language'] if info['language'] else user['language']
             introduction = info['introduction'] if info['introduction'] else user['introduction']
             position = info['position'] if info['position'] else user['position']
             org_bio = info['org_bio'] if info['org_bio'] else user['org_bio']
-            achievement= info['achievement'] if info['achievement'] else user['achievement']
+            achievement = info['achievement'] if info['achievement'] else user['achievement']
+            direction = info['direction'] if info['direction'] else user['direction']
             sql.update(cursor, ['user_name', 'gender', 'mail', 'phone', 'major',
-                       'campus', 'institution', 'hobby', 'language', 'introduction', 'position', 'org_bio', 'achievement'], '`user`', [username,
-                       gender, mail, phone, major, campus, institution, hobby, language, introduction, position, org_bio, achievement], 'where id = %d' % user_id)
+                       'department', 'institution', 'hobby', 'language', 'introduction', 'position', 'org_bio', 'achievement', 'direction'], '`user`', [username,
+                       gender, mail, phone, major, department, institution, hobby, language, introduction, position, org_bio, achievement, direction], 'where id = %d' % user_id)
             success = True
         else:
             msg = 'User not found'
