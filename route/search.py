@@ -286,7 +286,11 @@ class GetPaper(BaseResource):
     @request_handle
     def get(self):
         data = []
-        id = str(int(request.args['id']))
+        id = request.args["id"] if ('id' in request.args) else "null"
+        if id == "null":
+            return data
+        else:
+            id = str(int(request.args['id']))
         for work in openAlex.get_list_of_works(filters={'author.id': 'https://openalex.org/A' + id},
                                                pages=[int(request.args["page"])],
                                                per_page=int(request.args["per_page"])):
