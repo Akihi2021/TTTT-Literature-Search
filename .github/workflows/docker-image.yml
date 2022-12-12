@@ -15,4 +15,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag vinokkk/tttt:latest && docker login -u vinokkk -p Jin196632. && docker push vinokkk/tttt:latest
+      run: docker build . --file Dockerfile --tag vinokkk/tttt:latest 
+    - name: Push the Docker image 
+      run: docker login -u vinokkk -p Jin196632. && docker push vinokkk/tttt:latest
+    - name: Deploy 
+      run: /usr/bin/expect <<-EOF \
+            set timeout 10 \
+            spawn ssh root@39.101.74.166  "cd /root && ./deploy.sh" \
+            expect "root@39.101.74.166's password:" \
+            send "Jin196632.\n" \
+            expect eof \
+            EOF \
