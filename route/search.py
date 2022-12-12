@@ -287,7 +287,8 @@ class GetPaper(BaseResource):
         for work in openAlex.get_list_of_works(filters={'author.id': 'https://openalex.org/A' + id},
                                                pages=[int(request.args["page"])],
                                                per_page=int(request.args["per_page"])):
-            data.append(work)
+            for result in work.get('results'):
+                data.append({'title': result.get('title'), 'type': result.get('type')})
 
         resp = Response(
             data=data
