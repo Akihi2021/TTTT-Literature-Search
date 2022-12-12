@@ -50,7 +50,7 @@ class PaperRecommend(BaseResource):
     @search_ns.doc('Get papers searched')
     @search_ns.param(name="keyword", description="Keywords to search for papers", type=str, location="json")
     @search_ns.param(name="content", description="Search content(title|time|author|abstract|"")", type=str,
-                     default="null", location="json", required=True)
+                     default="null", location="json")
     @search_ns.param(name="type", description="filter type(dissertation,book,journal 任选,用逗号隔开)", type=str,
                      default="null", location="json")
     @search_ns.param(name="institution", description="institution name", type=str, default="null", location="json")
