@@ -149,9 +149,13 @@ class PaperRecommend(BaseResource):
                     pages=[int(request.args["page"])],
                     per_page=int(request.args["per_page"])):
                 data.append(work)
-
+        list1 = []
+        for work in data:
+            work = work.get('results')
+            for work1 in work:
+                list1.append({'authorships': work1.get('authorships'), 'title': work1.get('title')})
         resp = Response(
-            data=data
+            data=list1
         )
         return resp
 
@@ -269,8 +273,13 @@ class PaperRecommend(BaseResource):
                                                per_page=int(request.args["per_page"])):
             data.append(work)
 
+        list1 = []
+        for work in data:
+            work = work.get('results')
+            for work1 in work:
+                list1.append({'authorships': work1.get('authorships'), 'title': work1.get('title')})
         resp = Response(
-            data=data
+            data=list1
         )
         return resp
 
