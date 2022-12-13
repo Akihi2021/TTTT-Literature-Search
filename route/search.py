@@ -154,7 +154,8 @@ class PaperRecommend(BaseResource):
             work = work.get('results')
             for work1 in work:
                 list1.append({'authorships': work1.get('authorships'), 'title': work1.get('title'),
-                              'publication_date': work1.get('publication_date')})
+                              'publication_date': work1.get('publication_date'),
+                              'cited_by_count': work1.get("cited_by_count")})
         resp = Response(
             data=list1
         )
