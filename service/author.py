@@ -29,6 +29,7 @@ def get_title_and_type_of_papers(author_id):
 
 def get_related_authors(author_id):
     data = []
+    seen = set()
 
     try:
         works = get_papers(author_id)
@@ -39,11 +40,15 @@ def get_related_authors(author_id):
                     author = item.get("author")
                     id = author.get("id").split('/')[-1][1:]
                     name = author.get("display_name")
-                    if id != author_id:
-                        data.append(name)
+                    if id != author_id and name not in seen:
+                        data.append({
+                            "name": name,
+                            "id": id}
+                        )
+                        seen.add(name)
 
     finally:
-        return list(set(data))
+        return data
 
 
 if __name__ == "__main__":
