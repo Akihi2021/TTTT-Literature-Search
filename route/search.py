@@ -245,11 +245,11 @@ class PaperRecommend(BaseResource):
         if abstract != 'null':
             if and2 == "not":
                 filters = dict(filters, **{
-                    'abstract': "!" + abstract
+                    'abstract.search': "!" + abstract
                 })
             else:
                 filters = dict(filters, **{
-                    'abstract': abstract
+                    'abstract.search': abstract
                 })
         if author != 'null':
             if and3 == "not":
