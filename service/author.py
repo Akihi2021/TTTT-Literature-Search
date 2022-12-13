@@ -43,7 +43,7 @@ def get_related_authors(author_id):
                         data.append(name)
 
     finally:
-        return data
+        return list(set(data))
 
 
 if __name__ == "__main__":
