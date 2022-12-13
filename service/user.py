@@ -16,7 +16,7 @@ class LoginUser(UserMixin):
         self.password = user['password']
         self.email = user['mail']
         self.id = user['id']
-        self.is_associated = True if user['openalex_id'] else False
+        self.is_associated = user['openalex_id'] if user['openalex_id'] else False
 
     def verify_password(self, password):
         return password == self.password
