@@ -10,4 +10,6 @@ COPY . /app
 
 ENTRYPOINT ["python"]
 
+RUN pip install RandomWords
+
 CMD ["entrypoint.py"]

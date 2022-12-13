@@ -5,9 +5,11 @@ from rest import request_handle, Response, BaseResource
 from flask import request
 
 from route.search import search_authors_success_response_model, search_papers_success_response_model
-
+from random_words import RandomWords
 recommend_ns = swagger.namespace('recommend', description='APIs for Recommend Authors, Papers, Concepts')
 swagger.add_namespace(recommend_ns)
+
+word_generator = RandomWords()
 
 
 @recommend_ns.route('/papers')
@@ -18,12 +20,21 @@ class PaperRecommend(BaseResource):
     @recommend_ns.response(200, 'success', search_papers_success_response_model)
     @request_handle
     def get(self):
+        num = int(request.args["num"])
         data = []
-        for _ in range(int(request.args["num"])):
-            data.append(openAlex.get_random_work())
+        while len(data) < num:
+
+            papers = next(openAlex.get_list_of_works(
+                filters={
+                    'display_name.search': word_generator.random_word()
+                },
+                pages=[1],
+                per_page=num))
+            data.extend(papers.get("results"))
+
 
         resp = Response(
-            data=data
+            data=data[:num]
         )
 
         return resp
@@ -37,12 +48,20 @@ class AuthorRecommend(BaseResource):
     @recommend_ns.response(200, 'success', search_authors_success_response_model)
     @request_handle
     def get(self):
+        num = int(request.args["num"])
         data = []
-        for _ in range(int(request.args["num"])):
-            data.append(openAlex.get_random_author())
+
+        while len(data) < num:
+            authors = next(openAlex.get_list_of_works(
+                filters={
+                    'display_name.search': word_generator.random_word()
+                },
+                pages=[1],
+                per_page=num))
+            data.extend(authors.get("results"))
 
         resp = Response(
-            data=data
+            data=data[:num]
         )
 
         return resp
@@ -55,12 +74,39 @@ class AuthorRecommend(BaseResource):
     @recommend_ns.response(200, 'success', search_authors_success_response_model)
     @request_handle
     def get(self):
+        num = int(request.args["num"])
         data = []
-        for _ in range(int(request.args["num"])):
-            data.append(openAlex.get_random_concept())
+
+        while len(data) < num:
+            concepts = next(openAlex.get_list_of_works(
+                filters={
+                    'display_name.search': word_generator.random_word()
+                },
+                pages=[1],
+                per_page=num))
+            data.extend(concepts.get("results"))
 
         resp = Response(
-            data=data
+            data=data[:num]
         )
 
         return resp
+
+
+if __name__ == "__main__":
+    from pprint import pprint
+
+    num = 10
+    concepts = next(openAlex.get_list_of_concepts(
+        filters={
+            'display_name.search': word_generator.random_word()
+        },
+        pages=[1],
+        per_page=num))
+
+    resp = Response(
+        data=concepts
+    )
+
+    print(len(concepts.get("results")))
+
