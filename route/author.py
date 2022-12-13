@@ -69,6 +69,7 @@ class GetPaper(BaseResource):
     def get(self):
         author_id = str(int(request.args.get("id")))
 
+
         data = author.get_title_and_type_of_papers(author_id)
 
         resp = Response(
