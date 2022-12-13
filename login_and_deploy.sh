@@ -8,7 +8,7 @@
 #interact
 
 set timeout 30
-spawn ssh root@39.101.74.166 docker pull vinokkk/tttt:latest && docker-compose -f /root/docker-compose.yaml down && docker-compose -f /root/docker-compose.yaml up
+spawn ssh root@39.101.74.166 cd /root && docker pull vinokkk/tttt:latest && docker-compose -f /root/docker-compose.yaml down && docker-compose -f /root/docker-compose.yaml up
 expect "root@39.101.74.166's password:"
 send "Jin196632.\n"
 
