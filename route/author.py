@@ -28,13 +28,18 @@ author_paper_data_model = swagger.model("AuthorPapersData", model={
     "type": fields.String
 })
 
+
 author_papers_reponse_model = author_ns.inherit("AuthorPapersResponse", response_model, {
     "data": fields.List(fields.Nested(author_paper_data_model))
 })
 
+related_author_data_model = swagger.model("RelatedAuthorData", model={
+    "name": fields.String,
+    "id": fields.String
+})
 
 related_author_response_model = author_ns.inherit("RelatedAuthorResponse", response_model, {
-    "data": fields.List(fields.String)
+    "data": fields.List(fields.Nested(related_author_data_model))
 })
 
 
