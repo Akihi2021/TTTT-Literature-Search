@@ -30,6 +30,14 @@ search_authors_success_response_model = search_ns.inherit("SearchAuthorsSuccessR
     "data": fields.Nested(search_authors_success_data_model)
 })
 
+authors_parser = swagger.parser()
+authors_parser.add_argument('keyword', type=str,
+                            required=True, location="json", help='keyword')
+authors_parser.add_argument('pages', type=int,
+                            required=False, location="json", help='pages', default=1)
+authors_parser.add_argument('per_page', type=int,
+                            required=False, location="json", help='per_page', default=25)
+
 
 ####################################################################################################
 # Search API with OpenAlex
@@ -165,17 +173,15 @@ class PaperRecommend(BaseResource):
 @search_ns.route('/authors')
 class PaperRecommend(BaseResource):
     @search_ns.doc('Get authors searched')
-    @search_ns.param(name="keyword", description="Keywords to search for authors", type=str, location="json")
-    @search_ns.param(name="page", description="Page number of search results", type=int, default=1, location="json")
-    @search_ns.param(name="per_page", description="Number of authors displayed per page", type=int, default=25,
-                     location="json")
+    @search_ns.expect(authors_parser)
     @search_ns.response(200, 'success', search_authors_success_response_model)
     @request_handle
-    def get(self):
+    def post(self):
+        args = authors_parser.parse_args()
         data = []
-        for author in openAlex.get_list_of_authors(filters={'display_name.search': str(request.args["keyword"])},
-                                                   pages=[int(request.args["page"])],
-                                                   per_page=int(request.args["per_page"])):
+        for author in openAlex.get_list_of_authors(filters={'display_name.search': args["keyword"]},
+                                                   pages=[args["pages"]],
+                                                   per_page=args["per_page"]):
             data.append(author)
 
         list1 = []
