@@ -360,7 +360,7 @@ def show_favor_list(user_id):
                             authorship.append({'author_info': author.get(
                                 'author'), 'author_position': author.get('author_position')})
                         paper_list.append({'title': result.get('title'), 'type': result.get(
-                            'type'), 'author_ship': authorship})
+                            'type'), 'author_ship': authorship, 'id': id})
                         # paper_list.append(result)
             success = True
         else:
