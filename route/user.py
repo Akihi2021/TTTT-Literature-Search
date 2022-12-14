@@ -1,4 +1,5 @@
 from flask import request, Blueprint
+from flask_login import login_required
 from flask_restx import fields, Api, Resource
 from uuid import uuid4
 
@@ -477,6 +478,24 @@ class GetFavorList(BaseResource):
             data=dict(
                 success=success,
                 favor_list=favor_list
+            )
+        )
+
+        return resp
+
+
+@user_ns.route('/logout')
+class Logout(BaseResource):
+    @user_ns.doc('logout')
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        msg, success = user.logout()
+
+        resp = Response(
+            msg=msg,
+            data=dict(
+                success=success,
             )
         )
 

@@ -1,7 +1,7 @@
 from config import *
 from helper import sql
 from context import db, app, openAlex
-from flask_login import LoginManager, UserMixin, login_user
+from flask_login import LoginManager, UserMixin, login_user, logout_user
 from log import logger
 
 
@@ -367,3 +367,10 @@ def show_favor_list(user_id):
             msg = 'User not found'
         db.commit()
     return msg, success, paper_list
+
+
+def logout():
+    logout_user()
+    success = True
+    msg = "success"
+    return msg, success
