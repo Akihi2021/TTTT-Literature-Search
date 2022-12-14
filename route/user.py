@@ -591,11 +591,11 @@ class Unflollow(BaseResource):
         return resp
 
 
-if __name__ == "__main__":
-    with app.app_context():
-        mail.connect()
-        email = "tony106@163.com"
-        captcha = str(uuid1())[:6]
-        message = Message('学术成果分享平台邮箱验证码', sender="", recipients=[
-            email], body='您的验证码是：%s' % captcha)
-        mail.send(message)
+# if __name__ == "__main__":
+#    with app.app_context():
+#        mail.connect()
+#        email = "tony106@163.com"
+#        captcha = str(uuid1())[:6]
+#        message = Message('学术成果分享平台邮箱验证码', sender="", recipients=[
+#            email], body='您的验证码是：%s' % captcha)
+#        mail.send(message)
