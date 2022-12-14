@@ -30,4 +30,5 @@ jobs:
           host: 124.70.39.36
           username: root
           key: ${{ secrets.SSH_SECRET }}
+          passphrase: 196632
           script: pwd && cd /srv/tttt && ./deploy.sh
