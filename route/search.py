@@ -178,14 +178,14 @@ class PaperRecommend(BaseResource):
                                                    per_page=int(request.args["per_page"])):
             data.append(author)
 
-        list1 = []
-        for work in data:
-            work = work.get('results')
-            for work1 in work:
-                list1.append({'display_name': work1.get('display_name'), 'id': work1.get('id'),
-                              'last_known_institution': work1.get('last_known_institution')})
+        # list1 = []
+        # for work in data:
+        #     work = work.get('results')
+        #     for work1 in work:
+        #         list1.append({'display_name': work1.get('display_name'), 'id': work1.get('id'),
+        #                       'last_known_institution': work1.get('last_known_institution')})
         resp = Response(
-            data=list1
+            data=data
         )
         return resp
 
