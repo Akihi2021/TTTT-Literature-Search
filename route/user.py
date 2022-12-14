@@ -79,7 +79,9 @@ update_parser.add_argument('achievement', location="json",
 update_parser.add_argument('direction', location="json",
                            type=str, required=False, default=None, help='direction')
 
-associate_parser = id_parser.copy()
+associate_parser = swagger.parser()
+associate_parser.add_argument('user_id', type=str, required=True,
+                              location="json",   help='UserId')
 associate_parser.add_argument(
     'expert_id', type=str, location="json",  required=True, help='ExpertId')
 ####################################################################################################
@@ -131,6 +133,12 @@ user_info_data_model = user_ns.inherit("UserInfoData", success_data_model, {
 
 user_info_response_model = user_ns.inherit("UserInfoResponse", response_model, {
     "data": fields.Nested(user_info_data_model)
+})
+
+favor_success_data_model = user_ns.inherit("FavorSuccessData", success_data_model, {
+    "favor_list": fields.List(
+        fields.List(fields.String)
+    )
 })
 ####################################################################################################
 
@@ -297,7 +305,7 @@ class UpdateViewedHistory(BaseResource):
         args = follow_parser.parse_args()
 
         msg, success = user.update_following(
-            args['expert_id'], args['user_id'])
+            str(args['expert_id']), args['user_id'])
 
         code = 200 if success else 0
 
@@ -320,7 +328,8 @@ class UpdateViewedHistory(BaseResource):
     def post(self):
         args = favor_parser.parse_args()
 
-        msg, success = user.update_favor(args['paper_id'], args['user_id'])
+        msg, success = user.update_favor(
+            str(args['paper_id']), args['user_id'])
 
         code = 200 if success else 0
 
@@ -383,7 +392,8 @@ class AssociateUser(BaseResource):
     def post(self):
         args = associate_parser.parse_args()
 
-        msg, success = user.associate_user(args['user_id'], args['expert_id'])
+        msg, success = user.associate_user(
+            int(args['user_id']), args['expert_id'])
 
         code = 200 if success else 0
 
@@ -398,7 +408,82 @@ class AssociateUser(BaseResource):
         return resp
 
 
-@ user_ns.route('/all')
+@user_ns.route('/remove_favor')
+class RemoveFavor(BaseResource):
+    @user_ns.doc('remove favor from favorlist')
+    @user_ns.expect(favor_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = favor_parser.parse_args()
+
+        msg, success = user.remove_favor(
+            args['user_id'], args['paper_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
+            )
+        )
+
+        return resp
+
+
+@user_ns.route('/remove_following')
+class RemoveFavor(BaseResource):
+    @user_ns.doc('remove following expert from followinglist')
+    @user_ns.expect(follow_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = follow_parser.parse_args()
+
+        msg, success = user.remove_following(
+            args['user_id'], args['expert_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success
+            )
+        )
+
+        return resp
+
+
+@user_ns.route('/get_favor_list')
+class GetFavorList(BaseResource):
+    @user_ns.doc('get favor info')
+    @user_ns.expect(id_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = id_parser.parse_args()
+
+        msg, success, favor_list = user.show_favor_list(args['user_id'])
+
+        code = 200 if success else 0
+
+        resp = Response(
+            code=code,
+            msg=msg,
+            data=dict(
+                success=success,
+                favor_list=favor_list
+            )
+        )
+
+        return resp
+
+
+@user_ns.route('/all')
 class TestList(BaseResource):
     def get(self):
         return User.query_all()
