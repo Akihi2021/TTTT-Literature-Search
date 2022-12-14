@@ -1,6 +1,6 @@
 from config import *
 from helper import sql
-from context import db, app
+from context import db, app, openAlex
 from flask_login import LoginManager, UserMixin, login_user
 from log import logger
 
@@ -184,8 +184,11 @@ def update_following(following_id, user_id):
             follow = user['follow']
             if follow:
                 follow_list = eval(follow)
-                follow_list.insert(0, following_id)
-                follow = str(follow_list)
+                if following_id in follow_list:
+                    msg = "Already followed"
+                else:
+                    follow_list.insert(0, following_id)
+                    follow = str(follow_list)
             else:
                 follow_list = []
                 follow_list.insert(0, following_id)
@@ -212,8 +215,11 @@ def update_favor(favor_id, user_id):
             favor = user['favor']
             if favor:
                 favor_list = eval(favor)
-                favor_list.insert(0, favor_id)
-                favor = str(favor_list)
+                if favor_id in favor_list:
+                    msg = 'Already favored'
+                else:
+                    favor_list.insert(0, favor_id)
+                    favor = str(favor_list)
             else:
                 favor_list = []
                 favor_list.insert(0, favor_id)
@@ -278,3 +284,86 @@ def associate_user(user_id, expert_id):
         db.commit()
 
     return msg, success
+
+
+def remove_favor(user_id, favor_id):
+    with sql.Db_connection() as [db, cursor]:
+        num, user = sql.select(cursor, '*', '`user`',
+                               'where id = %d' % user_id)
+        success = False
+        msg = "success"
+
+        if num:
+            user = user[0]
+            favor = user['favor']
+            if favor:
+                favor_list = eval(favor)
+                # print(favor_list)
+                favor_list.remove(favor_id)
+                favor = str(favor_list)
+            else:
+                msg = 'List is empty'
+            sql.update(cursor, ['favor'], '`user`', [
+                favor], 'where id = %d' % user_id)
+            success = True
+        else:
+            msg = 'User not found'
+        db.commit()
+    return msg, success
+
+
+def remove_following(user_id, following_id):
+    with sql.Db_connection() as [db, cursor]:
+        num, user = sql.select(cursor, '*', '`user`',
+                               'where id = %d' % user_id)
+        success = False
+        msg = "success"
+
+        if num:
+            user = user[0]
+            follow = user['follow']
+            if follow:
+                follow_list = eval(follow)
+                follow_list.remove(following_id)
+                follow = str(follow_list)
+            else:
+                msg = 'List is empty'
+            sql.update(cursor, ['follow'], '`user`', [
+                follow], 'where id = %d' % user_id)
+            success = True
+        else:
+            msg = 'User not found'
+        db.commit()
+
+        return msg, success
+
+
+def show_favor_list(user_id):
+    with sql.Db_connection() as [db, cursor]:
+        num, user = sql.select(cursor, '*', '`user`',
+                               'where id = %d' % user_id)
+        success = False
+        msg = "success"
+
+        if num:
+            user = user[0]
+            list = user['favor']
+            list = eval(list)
+            paper_list = []
+            for id in list:
+                for work in openAlex.get_list_of_works(filters={
+                    'openalex_id': 'https://openalex.org/W' + str(id)
+                }):
+                    for result in work.get('results'):
+                        authorship = []
+                        for author in result.get('authorships'):
+                            authorship.append({'author_info': author.get(
+                                'author'), 'author_position': author.get('author_position')})
+                        paper_list.append({'title': result.get('title'), 'type': result.get(
+                            'type'), 'author_ship': authorship})
+                        # paper_list.append(result)
+            success = True
+        else:
+            msg = 'User not found'
+        db.commit()
+    return msg, success, paper_list
