@@ -136,14 +136,13 @@ class PaperRecommend(BaseResource):
                 data.append(work)
         if content == 'author':
             author_ids = ''
-            if institution != "null":
-                for i in openAlex.get_list_of_authors(filters={'display_name.search': str(request.args["keyword"])},
+            for i in openAlex.get_list_of_authors(filters={'display_name.search': str(request.args["keyword"])},
                                                       pages=[1]):
-                    id_0 = [ids.get('id') for ids in i.get('results')]
-                    for j in range(0, len(id_0) - 1):
-                        author_ids = author_ids + id_0[j]
-                        author_ids = author_ids + "|"
-                author_ids = author_ids.strip("|")
+                id_0 = [ids.get('id') for ids in i.get('results')]
+                for j in range(0, len(id_0) - 1):
+                    author_ids = author_ids + id_0[j]
+                    author_ids = author_ids + "|"
+            author_ids = author_ids.strip("|")
             for work in openAlex.get_list_of_works(filters=dict({
                 'author.id': author_ids}, **filters),
                     pages=[int(request.args["page"])],
