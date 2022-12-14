@@ -153,7 +153,7 @@ favor_success_response_model = user_ns.inherit("FavorSuccessResponse", favor_suc
 })
 
 captcha_success_data_model = user_ns.inherit("CaptchaSuccessData", success_data_model, {
-    "captcha": fields.String
+    "code": fields.String
 })
 
 captcha_success_response_model = user_ns.inherit("CaptchaSuccessResponse", captcha_success_data_model, {
@@ -531,24 +531,15 @@ class SendCaptcha(BaseResource):
 
         email = args['email']
         captcha = str(uuid1())[:6]
-        message = Message('学术成果分享平台邮箱验证码', sender='tony106@163.com', recipients=[
+        message = Message('学术成果分享平台邮箱验证码', sender='2318942949@qq.com', recipients=[
                           email], body='您的验证码是：%s' % captcha)
-        msg = "success"
-        success = True
-        # try:
-        mail.send(message)
-        # except:
-        #    success = False
-        #    msg = 'Failed to send message'
 
-        code = 200 if success else 0
+        mail.connect()
+        mail.send(message)
 
         resp = Response(
-            code=code,
-            msg=msg,
             data=dict(
-                success=success,
-                captcha=captcha
+                code=captcha
             )
         )
 
@@ -559,3 +550,13 @@ class SendCaptcha(BaseResource):
 class TestList(BaseResource):
     def get(self):
         return User.query_all()
+
+
+if __name__ == "__main__":
+    with app.app_context():
+        mail.connect()
+        email = "tony106@163.com"
+        captcha = str(uuid1())[:6]
+        message = Message('学术成果分享平台邮箱验证码', sender="", recipients=[
+            email], body='您的验证码是：%s' % captcha)
+        mail.send(message)
