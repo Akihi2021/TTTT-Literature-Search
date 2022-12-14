@@ -20,6 +20,7 @@ jobs:
       run: docker login -u vinokkk -p Jin196632. && docker push vinokkk/tttt:latest
 
   deploy:
+    needs: build
 
     runs-on: ubuntu-latest
 
