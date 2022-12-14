@@ -1,12 +1,22 @@
 from flask_restx import fields
+from flask import request, Blueprint
+from flask_login import login_required
+from flask_restx import fields, Api, Resource
+from flask_mail import Message, Mail
+from uuid import uuid4
+from uuid import uuid1
 
-from context import swagger
+from context import swagger, mail, app
+from rest import request_handle, Response, BaseResource, response_model
+from log import logger
+from helper import sql
 from model.user import User
 from rest import request_handle, Response, BaseResource, response_model
 from service import user
 
 user_ns = swagger.namespace('user', description='APIs for User')
 swagger.add_namespace(user_ns)
+
 
 ####################################################################################################
 # DEMO: Parser
@@ -82,7 +92,11 @@ associate_parser = swagger.parser()
 associate_parser.add_argument('user_id', type=str, required=True,
                               location="json", help='UserId')
 associate_parser.add_argument(
-    'expert_id', type=str, location="json", required=True, help='ExpertId')
+    'expert_id', type=str, location="json",  required=True, help='ExpertId')
+
+captcha_parser = swagger.parser()
+captcha_parser.add_argument(
+    'email', type=str, required=True, location="json", help='Email')
 ####################################################################################################
 
 ####################################################################################################
@@ -140,7 +154,17 @@ favor_success_data_model = user_ns.inherit("FavorSuccessData", success_data_mode
     )
 })
 
+favor_success_response_model = user_ns.inherit("FavorSuccessResponse", favor_success_data_model, {
+    "data": fields.Nested(favor_success_data_model)
+})
 
+captcha_success_data_model = user_ns.inherit("CaptchaSuccessData", success_data_model, {
+    "code": fields.String
+})
+
+captcha_success_response_model = user_ns.inherit("CaptchaSuccessResponse", captcha_success_data_model, {
+    "data": fields.Nested(captcha_success_data_model)
+})
 ####################################################################################################
 
 
@@ -484,8 +508,6 @@ class GetFavorList(BaseResource):
         return resp
 
 
-
-
 @user_ns.route('/logout')
 class Logout(BaseResource):
     @user_ns.doc('logout')
@@ -504,6 +526,36 @@ class Logout(BaseResource):
         return resp
 
 
+@user_ns.route('/send_captcha')
+class SendCaptcha(BaseResource):
+    @user_ns.doc('send captcha')
+    @user_ns.expect(captcha_parser)
+    @user_ns.response(200, 'success', captcha_success_response_model)
+    @request_handle
+    def post(self):
+        args = captcha_parser.parse_args()
+
+        email = args['email']
+        captcha = str(uuid1())[:6]
+        message = Message('学术成果分享平台邮箱验证码', sender='2318942949@qq.com', recipients=[
+                          email], body='您的验证码是：%s' % captcha)
+
+        mail.connect()
+        mail.send(message)
+
+        resp = Response(
+            data=dict(
+                code=captcha
+            )
+        )
+
+        return resp
+
+
+@ user_ns.route('/all')
+class TestList(BaseResource):
+    def get(self):
+        return User.query_all()
 map_user_unfollowed_authors = dict()
 
 
@@ -534,8 +586,11 @@ class Unflollow(BaseResource):
 
 
 
-
-# @user_ns.route('/all')
-# class TestList(BaseResource):
-#     def get(self):
-#         return User.query_all()
+if __name__ == "__main__":
+    with app.app_context():
+        mail.connect()
+        email = "tony106@163.com"
+        captcha = str(uuid1())[:6]
+        message = Message('学术成果分享平台邮箱验证码', sender="", recipients=[
+            email], body='您的验证码是：%s' % captcha)
+        mail.send(message)

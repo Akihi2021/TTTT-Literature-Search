@@ -4,7 +4,7 @@ from flask_restx import Api
 from flask_cors import CORS
 from flask import Blueprint
 from diophila import OpenAlex
-
+from flask_mail import Mail
 
 import config
 
@@ -26,3 +26,13 @@ db = SQLAlchemy(app)
 
 openAlex = OpenAlex()
 
+app.config['MAIL_DEBUG'] = True
+app.config['MAIL_SUPPRESS_SEND'] = False
+app.config["MAIL_SERVER"] = "smtp.qq.com"
+app.config["MAIL_PORT"] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
+app.config["MAIL_USERNAME"] = "2318942949@qq.com"
+app.config["MAIL_PASSWORD"] = "efenlcaarkbidjgf"
+
+mail = Mail(app)

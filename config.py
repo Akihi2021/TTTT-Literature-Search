@@ -7,4 +7,3 @@ db_port = "33306"
 db_user = "root"
 db_passwd = "Buaa2022"
 db_database = "tttt"
-
