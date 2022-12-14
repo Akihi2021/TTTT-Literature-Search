@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build-and-deploy:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -18,14 +18,18 @@ jobs:
       run: docker build . --file Dockerfile --tag vinokkk/tttt:latest 
     - name: Push the Docker image 
       run: docker login -u vinokkk -p Jin196632. && docker push vinokkk/tttt:latest
-#     - name: Install 
-#       run: apt-get update && apt-get install expect
-#     - name: Deploy 
-#       run: /usr/bin/expect <<-EOF 
-#             set timeout 10 
-#             spawn ssh root@39.101.74.166  "cd /root && ./deploy.sh" 
-#             expect "root@39.101.74.166's password:" 
-#             send "Jin196632.\n" 
-#             expect eof 
-#             EOF 
-# 
+
+  deploy:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: deploy on ECS
+        uses: appleboy/ssh-action@master
+        with:
+          host: 124.70.39.36
+          username: root
+          key: ${{ secrets.SSH_SECRET }}
+          passphrase: 196632
+          script: pwd && cd /srv/tttt && ./deploy.sh
