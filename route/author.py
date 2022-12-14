@@ -25,7 +25,8 @@ author_response_model = author_ns.inherit("AuthorResponse", response_model, {
 
 author_paper_data_model = swagger.model("AuthorPapersData", model={
     "title": fields.String,
-    "type": fields.String
+    "type": fields.String,
+    "id": fields.String
 })
 
 
@@ -72,7 +73,7 @@ class GetPaper(BaseResource):
         author_id = str(int(request.args.get("id")))
 
 
-        data = author.get_title_and_type_of_papers(author_id)
+        data = author.get_id_and_title_and_type_of_papers(author_id)
 
         resp = Response(
             data=data

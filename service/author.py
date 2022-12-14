@@ -12,7 +12,7 @@ def get_papers(author_id):
         return works
 
 
-def get_title_and_type_of_papers(author_id):
+def get_id_and_title_and_type_of_papers(author_id):
     data = []
 
     try:
@@ -20,6 +20,7 @@ def get_title_and_type_of_papers(author_id):
         for work in works:
             for result in work.get('results'):
                 data.append({
+                    'id': result.get('id'),
                     'title': result.get('title'),
                     'type': result.get('type')
                 })
