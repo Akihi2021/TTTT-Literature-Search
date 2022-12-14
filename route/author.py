@@ -3,15 +3,12 @@ import string
 from flask import request
 from flask_restx import fields
 
-
 from context import swagger, openAlex
 from rest import request_handle, Response, BaseResource, response_model
 from service import author
 
-
 author_ns = swagger.namespace('author', description='API for Author')
 swagger.add_namespace(author_ns)
-
 
 author_data_model = swagger.model("AuthorData", model={
     "group_by": fields.String,
@@ -28,7 +25,6 @@ author_paper_data_model = swagger.model("AuthorPapersData", model={
     "type": fields.String,
     "id": fields.String
 })
-
 
 author_papers_reponse_model = author_ns.inherit("AuthorPapersResponse", response_model, {
     "data": fields.List(fields.Nested(author_paper_data_model))
@@ -72,7 +68,6 @@ class GetPaper(BaseResource):
     def get(self):
         author_id = str(int(request.args.get("id")))
 
-
         data = author.get_id_and_title_and_type_of_papers(author_id)
 
         resp = Response(
@@ -98,8 +93,3 @@ class GetRelatedAuthor(BaseResource):
         )
 
         return resp
-
-
-
-
-

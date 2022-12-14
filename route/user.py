@@ -1,18 +1,12 @@
-from flask import request, Blueprint
-from flask_login import login_required
-from flask_restx import fields, Api, Resource
-from uuid import uuid4
+from flask_restx import fields
 
-from context import app, swagger
-from rest import request_handle, Response, BaseResource, response_model
-from log import logger
-from helper import sql
+from context import swagger
 from model.user import User
+from rest import request_handle, Response, BaseResource, response_model
 from service import user
 
 user_ns = swagger.namespace('user', description='APIs for User')
 swagger.add_namespace(user_ns)
-
 
 ####################################################################################################
 # DEMO: Parser
@@ -28,48 +22,48 @@ login_parser.add_argument('password', type=str,
 
 forget_parser = login_parser.copy()
 forget_parser.add_argument('repassword', type=str,
-                           required=True, location="json",  help='rePassword')
+                           required=True, location="json", help='rePassword')
 
 register_parser = forget_parser.copy()
 register_parser.add_argument(
-    'email', type=str, required=True, location="json",  help='Email')
+    'email', type=str, required=True, location="json", help='Email')
 
 id_parser = swagger.parser()
 id_parser.add_argument('user_id', type=int, required=True,
-                       location="json",   help='UserId')
+                       location="json", help='UserId')
 
 history_parser = id_parser.copy()
 history_parser.add_argument(
-    'paper_id', type=str, required=True, location="json",  help='latest viewed paper')
+    'paper_id', type=str, required=True, location="json", help='latest viewed paper')
 
 favor_parser = id_parser.copy()
 favor_parser.add_argument('paper_id', type=str,
-                          required=True, location="json",  help='latest favored paper')
+                          required=True, location="json", help='latest favored paper')
 
 follow_parser = id_parser.copy()
 follow_parser.add_argument('expert_id', type=str,
-                           required=True, location="json",  help='latest followed expert')
+                           required=True, location="json", help='latest followed expert')
 
 update_parser = id_parser.copy()
-update_parser.add_argument('user_name', location="json",  type=str,
+update_parser.add_argument('user_name', location="json", type=str,
                            required=False, default=None, help='username')
 update_parser.add_argument(
-    'gender', type=str, required=False, location="json",  default=None, help='gender')
+    'gender', type=str, required=False, location="json", default=None, help='gender')
 update_parser.add_argument(
-    'mail', type=str, required=False, location="json",  default=None, help='email')
+    'mail', type=str, required=False, location="json", default=None, help='email')
 update_parser.add_argument(
-    'phone', type=str, required=False, location="json",  default=None, help='phone')
+    'phone', type=str, required=False, location="json", default=None, help='phone')
 update_parser.add_argument(
-    'major', type=str, required=False, location="json",  default=None, help='major')
+    'major', type=str, required=False, location="json", default=None, help='major')
 update_parser.add_argument(
-    'department', type=str, required=False, location="json",  default=None, help='department')
+    'department', type=str, required=False, location="json", default=None, help='department')
 update_parser.add_argument('institution', type=str,
-                           required=False, location="json",  default=None, help='institution')
+                           required=False, location="json", default=None, help='institution')
 update_parser.add_argument(
-    'hobby', type=str, required=False, location="json",  default=None, help='hobby')
+    'hobby', type=str, required=False, location="json", default=None, help='hobby')
 update_parser.add_argument(
-    'language', type=str, required=False, location="json",  default=None, help='language')
-update_parser.add_argument('introduction', location="json",  type=str,
+    'language', type=str, required=False, location="json", default=None, help='language')
+update_parser.add_argument('introduction', location="json", type=str,
                            required=False, default=None, help='introduction')
 update_parser.add_argument('position', location="json",
                            type=str, required=False, default=None, help='position')
@@ -82,9 +76,9 @@ update_parser.add_argument('direction', location="json",
 
 associate_parser = swagger.parser()
 associate_parser.add_argument('user_id', type=str, required=True,
-                              location="json",   help='UserId')
+                              location="json", help='UserId')
 associate_parser.add_argument(
-    'expert_id', type=str, location="json",  required=True, help='ExpertId')
+    'expert_id', type=str, location="json", required=True, help='ExpertId')
 ####################################################################################################
 
 ####################################################################################################
@@ -141,6 +135,8 @@ favor_success_data_model = user_ns.inherit("FavorSuccessData", success_data_mode
         fields.List(fields.String)
     )
 })
+
+
 ####################################################################################################
 
 
@@ -255,9 +251,9 @@ class CheckInfo(BaseResource):
                                else False) if success else None,
                 department=infouser['department'] if success else None,
                 hobby=infouser['hobby'] if success else None,
-                history=(eval(infouser['history'])if infouser['history']
+                history=(eval(infouser['history']) if infouser['history']
                          else []) if success else None,
-                follow=(eval(infouser['follow'])if infouser['follow']
+                follow=(eval(infouser['follow']) if infouser['follow']
                         else []) if success else None,
                 favor=(eval(infouser['favor']) if infouser['favor']
                        else []) if success else None,

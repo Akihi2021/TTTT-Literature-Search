@@ -1,11 +1,10 @@
-from log import logger
+from flask import request
+from random_words import RandomWords
 
 from context import swagger, openAlex
 from rest import request_handle, Response, BaseResource
-from flask import request
-
 from route.search import search_authors_success_response_model, search_papers_success_response_model
-from random_words import RandomWords
+
 recommend_ns = swagger.namespace('recommend', description='APIs for Recommend Authors, Papers, Concepts')
 swagger.add_namespace(recommend_ns)
 
@@ -23,7 +22,6 @@ class PaperRecommend(BaseResource):
         num = int(request.args["num"])
         data = []
         while len(data) < num:
-
             papers = next(openAlex.get_list_of_works(
                 filters={
                     'display_name.search': word_generator.random_word()
@@ -31,7 +29,6 @@ class PaperRecommend(BaseResource):
                 pages=[1],
                 per_page=num))
             data.extend(papers.get("results"))
-
 
         resp = Response(
             data=data[:num]
@@ -66,6 +63,7 @@ class AuthorRecommend(BaseResource):
 
         return resp
 
+
 @recommend_ns.route('/concepts')
 class AuthorRecommend(BaseResource):
     @recommend_ns.doc('Recommend concepts')
@@ -94,8 +92,6 @@ class AuthorRecommend(BaseResource):
 
 
 if __name__ == "__main__":
-    from pprint import pprint
-
     num = 10
     concepts = next(openAlex.get_list_of_concepts(
         filters={
@@ -109,4 +105,3 @@ if __name__ == "__main__":
     )
 
     print(len(concepts.get("results")))
-
