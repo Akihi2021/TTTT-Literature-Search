@@ -136,14 +136,13 @@ class PaperRecommend(BaseResource):
                 data.append(work)
         if content == 'author':
             author_ids = ''
-            if institution != "null":
-                for i in openAlex.get_list_of_authors(filters={'display_name.search': str(request.args["keyword"])},
+            for i in openAlex.get_list_of_authors(filters={'display_name.search': str(request.args["keyword"])},
                                                       pages=[1]):
-                    id_0 = [ids.get('id') for ids in i.get('results')]
-                    for j in range(0, len(id_0) - 1):
-                        author_ids = author_ids + id_0[j]
-                        author_ids = author_ids + "|"
-                author_ids = author_ids.strip("|")
+                id_0 = [ids.get('id') for ids in i.get('results')]
+                for j in range(0, len(id_0) - 1):
+                    author_ids = author_ids + id_0[j]
+                    author_ids = author_ids + "|"
+            author_ids = author_ids.strip("|")
             for work in openAlex.get_list_of_works(filters=dict({
                 'author.id': author_ids}, **filters),
                     pages=[int(request.args["page"])],
@@ -155,7 +154,7 @@ class PaperRecommend(BaseResource):
             for work1 in work:
                 list1.append({'authorships': work1.get('authorships'), 'title': work1.get('title'),
                               'publication_date': work1.get('publication_date'),
-                              'cited_by_count': work1.get("cited_by_count"),'id':work1.get('id')})
+                              'cited_by_count': work1.get("cited_by_count"), 'id': work1.get('id')})
         resp = Response(
             data=list1
         )
@@ -178,14 +177,14 @@ class PaperRecommend(BaseResource):
                                                    per_page=int(request.args["per_page"])):
             data.append(author)
 
-        list1 = []
-        for work in data:
-            work = work.get('results')
-            for work1 in work:
-                list1.append({'display_name': work1.get('display_name'), 'id': work1.get('id'),
-                              'last_known_institution': work1.get('last_known_institution')})
+        # list1 = []
+        # for work in data:
+        #     work = work.get('results')
+        #     for work1 in work:
+        #         list1.append({'display_name': work1.get('display_name'), 'id': work1.get('id'),
+        #                       'last_known_institution': work1.get('last_known_institution')})
         resp = Response(
-            data=list1
+            data=data
         )
         return resp
 
@@ -285,7 +284,9 @@ class PaperRecommend(BaseResource):
         for work in data:
             work = work.get('results')
             for work1 in work:
-                list1.append({'authorships': work1.get('authorships'), 'title': work1.get('title')})
+                list1.append({'authorships': work1.get('authorships'), 'title': work1.get('title'),
+                              'publication_date': work1.get('publication_date'),
+                              'cited_by_count': work1.get("cited_by_count"), 'id': work1.get('id')})
         resp = Response(
             data=list1
         )
