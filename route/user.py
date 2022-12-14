@@ -79,7 +79,9 @@ update_parser.add_argument('achievement', location="json",
 update_parser.add_argument('direction', location="json",
                            type=str, required=False, default=None, help='direction')
 
-associate_parser = id_parser.copy()
+associate_parser = swagger.parser()
+associate_parser.add_argument('user_id', type=str, required=True,
+                              location="json",   help='UserId')
 associate_parser.add_argument(
     'expert_id', type=str, location="json",  required=True, help='ExpertId')
 ####################################################################################################
@@ -390,7 +392,8 @@ class AssociateUser(BaseResource):
     def post(self):
         args = associate_parser.parse_args()
 
-        msg, success = user.associate_user(args['user_id'], args['expert_id'])
+        msg, success = user.associate_user(
+            int(args['user_id']), args['expert_id'])
 
         code = 200 if success else 0
 
