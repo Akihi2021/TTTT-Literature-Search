@@ -39,6 +39,14 @@ def get_related_authors(author_id):
     seen = set()
     flag = False
 
+    from route.user import map_user_unfollowed_authors
+
+    unfollowed = map_user_unfollowed_authors.get(author_id)
+    if unfollowed:
+        unfollowed = set(unfollowed)
+    else:
+        unfollowed = set()
+
     try:
         works = get_papers(author_id)
         for work in works:
@@ -54,7 +62,7 @@ def get_related_authors(author_id):
                     author = item.get("author")
                     id = author.get("id").split('/')[-1][1:]
                     name = author.get("display_name")
-                    if id != author_id and name not in seen:
+                    if id != author_id and name not in seen and author_id not in unfollowed:
                         data.append({
                             "name": name,
                             "id": id}

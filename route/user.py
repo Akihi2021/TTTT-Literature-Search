@@ -44,6 +44,10 @@ follow_parser = id_parser.copy()
 follow_parser.add_argument('expert_id', type=str,
                            required=True, location="json", help='latest followed expert')
 
+unfollow_parser = swagger.parser()
+unfollow_parser.add_argument("user_openalex_id", type=int, required=True, location="json")
+unfollow_parser.add_argument("following_id", type=int, required=True, location="json")
+
 update_parser = id_parser.copy()
 update_parser.add_argument('user_name', location="json", type=str,
                            required=False, default=None, help='username')
@@ -480,6 +484,8 @@ class GetFavorList(BaseResource):
         return resp
 
 
+
+
 @user_ns.route('/logout')
 class Logout(BaseResource):
     @user_ns.doc('logout')
@@ -498,7 +504,38 @@ class Logout(BaseResource):
         return resp
 
 
-@user_ns.route('/all')
-class TestList(BaseResource):
-    def get(self):
-        return User.query_all()
+map_user_unfollowed_authors = dict()
+
+
+@user_ns.route('/unfollow')
+class Unflollow(BaseResource):
+    @user_ns.doc("unfollow")
+    @user_ns.expect(unfollow_parser)
+    @user_ns.response(200, 'success', success_response_model)
+    @request_handle
+    def post(self):
+        args = unfollow_parser.parse_args()
+
+        user_openalex_id = str(args.get("user_openalex_id"))
+        following_id = str(args.get("following_id"))
+
+        if user_openalex_id in map_user_unfollowed_authors:
+            map_user_unfollowed_authors.get(user_openalex_id).append(following_id)
+        else:
+            map_user_unfollowed_authors[user_openalex_id] = [following_id]
+
+        resp = Response(
+            data=dict(
+                success=True,
+            )
+        )
+
+        return resp
+
+
+
+
+# @user_ns.route('/all')
+# class TestList(BaseResource):
+#     def get(self):
+#         return User.query_all()

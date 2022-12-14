@@ -14,4 +14,4 @@ from route import hello, search, user, recommend, search, paper, author
 if __name__ == "__main__":
     # run Flask App
     app.json_encoder = AppJSONEncoder
-    app.run(debug=True, port=config.server_port, host="0.0.0.0", use_reloader=True)
+    app.run(debug=True, port=5051, host="0.0.0.0", use_reloader=True)
