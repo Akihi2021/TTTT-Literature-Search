@@ -55,8 +55,10 @@ follow_parser.add_argument('expert_id', type=str,
                            required=True, location="json", help='latest followed expert')
 
 unfollow_parser = swagger.parser()
-unfollow_parser.add_argument("user_openalex_id", type=int, required=True, location="json")
-unfollow_parser.add_argument("following_id", type=int, required=True, location="json")
+unfollow_parser.add_argument(
+    "user_openalex_id", type=int, required=True, location="json")
+unfollow_parser.add_argument(
+    "following_id", type=int, required=True, location="json")
 
 update_parser = id_parser.copy()
 update_parser.add_argument('user_name', location="json", type=str,
@@ -537,15 +539,16 @@ class SendCaptcha(BaseResource):
 
         email = args['email']
         captcha = str(uuid1())[:6]
+        code = captcha
         message = Message('学术成果分享平台邮箱验证码', sender='2318942949@qq.com', recipients=[
-                          email], body='您的验证码是：%s' % captcha)
+                          email], body='您的验证码是：%s' % code)
 
         mail.connect()
         mail.send(message)
 
         resp = Response(
             data=dict(
-                code=captcha
+                code=code
             )
         )
 
@@ -556,6 +559,8 @@ class SendCaptcha(BaseResource):
 class TestList(BaseResource):
     def get(self):
         return User.query_all()
+
+
 map_user_unfollowed_authors = dict()
 
 
@@ -572,7 +577,8 @@ class Unflollow(BaseResource):
         following_id = str(args.get("following_id"))
 
         if user_openalex_id in map_user_unfollowed_authors:
-            map_user_unfollowed_authors.get(user_openalex_id).append(following_id)
+            map_user_unfollowed_authors.get(
+                user_openalex_id).append(following_id)
         else:
             map_user_unfollowed_authors[user_openalex_id] = [following_id]
 
@@ -583,7 +589,6 @@ class Unflollow(BaseResource):
         )
 
         return resp
-
 
 
 if __name__ == "__main__":
